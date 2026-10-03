@@ -1,0 +1,48 @@
+# Carpetas generadas por Unity
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+/[Ee]xported[Oo]bj/
+
+# Archivos de IDEs
+.vs/
+.vscode/
+.idea/
+.consulo/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Metas de símbolos de depuración
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# Builds y paquetes
+*.apk
+*.aab
+*.unitypackage
+*.app
+
+# Otros
+crashlytics-build.properties
+sysinfo.txt
+.DS_Store
+Thumbs.db
