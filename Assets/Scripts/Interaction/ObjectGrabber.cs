@@ -144,13 +144,14 @@ namespace EscapeRoomLab
         }
 
         /// <summary>
-        /// Devuelve el Grabbable del collider si se puede agarrar.
+        /// Devuelve el Grabbable del collider si se puede agarrar: no debe estar ya en la mano
+        /// ni desactivado (por ejemplo, un cubo encajado en su ranura).
         /// GetComponentInParent permite agarrar objetos cuyo collider está en un hijo.
         /// </summary>
         private static Grabbable GetAvailableGrabbable(Collider hitCollider)
         {
             Grabbable grabbable = hitCollider.GetComponentInParent<Grabbable>();
-            return grabbable != null && !grabbable.IsHeld ? grabbable : null;
+            return grabbable != null && grabbable.enabled && !grabbable.IsHeld ? grabbable : null;
         }
 
         /// <summary>

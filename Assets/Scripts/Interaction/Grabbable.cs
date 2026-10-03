@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace EscapeRoomLab
@@ -5,6 +6,7 @@ namespace EscapeRoomLab
     /// <summary>
     /// Marca un objeto con física como agarrable por el jugador (ObjectGrabber).
     /// Guarda la configuración original del Rigidbody para restaurarla al soltarlo.
+    /// Desactivar el componente impide agarrar el objeto (lo usa CubeSlot al resolver el código).
     /// </summary>
     [RequireComponent(typeof(Rigidbody))]
     public class Grabbable : MonoBehaviour
@@ -12,6 +14,12 @@ namespace EscapeRoomLab
         public Rigidbody Body { get; private set; }
         public Collider[] Colliders { get; private set; }
         public bool IsHeld { get; private set; }
+
+        /// <summary>
+        /// Aviso al ser agarrado. Se lanza antes de preparar el Rigidbody, así quien lo escucha
+        /// (por ejemplo, la ranura de un cubo) puede liberarlo antes de que el jugador lo mueva.
+        /// </summary>
+        public event Action<Grabbable> Grabbed;
 
         private bool originalUseGravity;
         private RigidbodyInterpolation originalInterpolation;
@@ -29,6 +37,8 @@ namespace EscapeRoomLab
         public void OnGrabbed()
         {
             IsHeld = true;
+            Grabbed?.Invoke(this);
+
             originalUseGravity = Body.useGravity;
             originalInterpolation = Body.interpolation;
 
