@@ -31,6 +31,8 @@ namespace EscapeRoomLab
         [SerializeField] private float holdDistance = 1.5f;
         [Tooltip("Capas que puede alcanzar el rayo. Las paredes deben estar incluidas para no agarrar a través de ellas.")]
         [SerializeField] private LayerMask grabMask = ~0;
+        [Tooltip("Margen de puntería, en metros. Si el rayo no da justo en un objeto, se busca con una esfera de este radio para que los objetos pequeños sean fáciles de coger.")]
+        [SerializeField] private float aimAssistRadius = 0.1f;
 
         [Header("Física al sostener")]
         [Tooltip("Rapidez con la que el objeto sigue al punto de agarre.")]
@@ -52,6 +54,12 @@ namespace EscapeRoomLab
         private Collider[] playerColliders;
 
         public bool IsHolding => heldObject != null;
+
+        /// <summary>
+        /// Objeto agarrable al que apunta el jugador en este momento (null si no hay ninguno).
+        /// Lo usa el punto de mira para cambiar de aspecto.
+        /// </summary>
+        public Grabbable LookTarget { get; private set; }
 
         private void Awake()
         {
@@ -82,6 +90,8 @@ namespace EscapeRoomLab
 
         private void Update()
         {
+            LookTarget = IsHolding ? null : FindLookTarget();
+
             if (interactAction.action.WasPressedThisFrame())
             {
                 if (IsHolding)
@@ -106,20 +116,50 @@ namespace EscapeRoomLab
         }
 
         /// <summary>
-        /// Lanza un rayo desde el centro de la cámara y agarra el primer Grabbable que encuentre.
-        /// Si el rayo choca antes con una pared u otro objeto, no se agarra nada.
+        /// Busca el Grabbable al que apunta el centro de la cámara.
+        /// Primero prueba con un rayo exacto; si no da en nada agarrable, repite con una esfera
+        /// (aimAssistRadius) para perdonar pequeños fallos de puntería. En ambos casos se usa
+        /// el primer impacto, así que una pared delante sigue bloqueando el agarre.
+        /// </summary>
+        private Grabbable FindLookTarget()
+        {
+            Ray ray = new Ray(cameraTransform.position, cameraTransform.forward);
+
+            if (Physics.Raycast(ray, out RaycastHit hit, grabRange, grabMask, QueryTriggerInteraction.Ignore))
+            {
+                Grabbable direct = GetAvailableGrabbable(hit.collider);
+                if (direct != null)
+                {
+                    return direct;
+                }
+            }
+
+            if (aimAssistRadius > 0f &&
+                Physics.SphereCast(ray, aimAssistRadius, out hit, grabRange, grabMask, QueryTriggerInteraction.Ignore))
+            {
+                return GetAvailableGrabbable(hit.collider);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Devuelve el Grabbable del collider si se puede agarrar.
+        /// GetComponentInParent permite agarrar objetos cuyo collider está en un hijo.
+        /// </summary>
+        private static Grabbable GetAvailableGrabbable(Collider hitCollider)
+        {
+            Grabbable grabbable = hitCollider.GetComponentInParent<Grabbable>();
+            return grabbable != null && !grabbable.IsHeld ? grabbable : null;
+        }
+
+        /// <summary>
+        /// Agarra el objeto al que se está apuntando, si hay alguno.
         /// </summary>
         private void TryGrab()
         {
-            Ray ray = new Ray(cameraTransform.position, cameraTransform.forward);
-            if (!Physics.Raycast(ray, out RaycastHit hit, grabRange, grabMask, QueryTriggerInteraction.Ignore))
-            {
-                return;
-            }
-
-            // GetComponentInParent permite agarrar objetos cuyo collider está en un hijo.
-            Grabbable grabbable = hit.collider.GetComponentInParent<Grabbable>();
-            if (grabbable == null || grabbable.IsHeld)
+            Grabbable grabbable = LookTarget;
+            if (grabbable == null)
             {
                 return;
             }
