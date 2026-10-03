@@ -46,14 +46,13 @@ El jugador está encerrado en un **laboratorio**. Para escapar tiene que equilib
 
 ### Controles
 
-<!-- TODO: revisar cuando estén definidos en InputSystem_Actions -->
-
 | Acción | Tecla |
 |---|---|
 | Moverse | `WASD` |
 | Mirar | Ratón |
-| Interactuar / coger | `E` |
-| Pausa | `Esc` |
+| Coger / soltar objeto | `E` |
+| Rotar el objeto que se sostiene | Mantener clic derecho y mover el ratón |
+| Pausa | `Esc` <!-- TODO: pendiente de implementar --> |
 
 ## Cómo ejecutar el proyecto
 
@@ -66,21 +65,39 @@ El jugador está encerrado en un **laboratorio**. Para escapar tiene que equilib
 1. Clona el repositorio.
 2. En **Unity Hub**, pulsa **Add → Add project from disk** y selecciona la carpeta `EscapeRoomLab`.
 3. Ábrelo con Unity **6000.6.4f1**. La primera vez tarda unos minutos porque Unity regenera la carpeta `Library/`.
-4. Abre la escena `Assets/Scenes/MainMenu.unity` <!-- TODO: confirmar nombre --> y pulsa **Play**.
+4. Abre la escena `Assets/Scenes/Laboratorio.unity` y pulsa **Play**. <!-- TODO: cambiar a MainMenu cuando exista el menú -->
+
+> **Nota:** si Unity pide importar *TMP Essentials*, no hace falta: ya están incluidos en `Assets/TextMesh Pro/`.
 
 ## Puzles y mecánicas
 
 | # | Puzle | Tipo | Qué hace el jugador | Resultado |
 |---|---|---|---|---|
-| 1 | **Balanzas** | Físico (Rigidbody) | Coge pesas de distintos tamaños y las coloca en el platillo hasta equilibrar cada balanza. El tamaño de la pesa indica su peso. | Cada balanza equilibrada libera un cubo con un número. |
-| 2 | **La nota** | Exploración | Busca por la sala una nota escondida con el código **3496**. | Conoce el orden de los cubos. |
-| 3 | **Cubos numerados** | Colocación y orientación | Encaja los cubos en las ranuras en el orden de la nota, girándolos para que el número quede hacia fuera. | Si es correcto, se abre la puerta. Si hay un error, la luz parpadea en rojo y la puerta no se abre. |
+| 1 | **Balanzas** | Físico (Rigidbody) | Coge pesas de distintos tamaños y las coloca en el platillo hasta equilibrar cada balanza. El tamaño de la pesa indica su peso. | La vitrina de cristal se abre y libera los cubos numerados. |
+| 2 | **La nota** | Exploración | Busca por la sala una nota escondida con el código **3496** y la coge y gira para leerla. | Conoce el orden de los cubos. |
+| 3 | **Cubos numerados** | Colocación y orientación | Encaja los cubos en las ranuras en el orden de la nota, girándolos para que el número quede hacia fuera y derecho. | Si es correcto, los cubos se bloquean y se abre la puerta. Si hay un error, la luz parpadea en rojo y los cubos salen expulsados para volver a intentarlo. |
+
+### Estado de las mecánicas
+
+| Mecánica | Estado |
+|---|---|
+| Jugador en primera persona (movimiento, vista, gravedad) | ✅ Hecho |
+| Coger, soltar y rotar objetos con física | ✅ Hecho |
+| Punto de mira que reacciona a los objetos agarrables | ✅ Hecho |
+| Balanza que se inclina según el peso y detecta el equilibrio | ✅ Hecho |
+| Cubos numerados, ranuras y comprobación del código | ✅ Hecho |
+| Puerta que se abre con el código correcto | ✅ Hecho |
+| Vitrina que se abre al equilibrar la balanza y libera los cubos | ✅ Hecho |
+| Nota con el código, que se coge y se rota para leerla | ✅ Hecho (falta esconderla) |
+| Menú de inicio y pantalla final | ⬜ Pendiente |
 
 ### Diseño
 
 - **Primera pista:** al empezar hay una balanza claramente desequilibrada con una pesa al lado, para que el jugador entienda enseguida que tiene que equilibrarla.
 - **Nota escondida:** la nota no está a la vista (en un cajón, detrás de un cuadro o bajo un objeto que hay que mover). Así el juego no se reduce a manipular objetos y obliga a explorar.
 - **Comprobación del orden:** la puerta solo se abre cuando los 4 cubos están colocados en el orden exacto de la nota y con la orientación correcta.
+- **El 6 y el 9:** la ranura exige que el número no esté boca abajo, así que la orientación forma parte del puzle: un 6 girado parece un 9.
+- **Pesas que se deducen a simple vista:** cada pesa tiene una masa acorde a su tamaño, para que el jugador pueda razonar qué combinación equilibra la balanza.
 
 ### Decisiones pendientes
 
@@ -91,12 +108,12 @@ El jugador está encerrado en un **laboratorio**. Para escapar tiene que equilib
 
 | Requisito | Estado | Dónde se cumple |
 |---|---|---|
-| Mínimo dos puzles o mecánicas distintas | ⬜ | Balanzas, nota escondida y cubos numerados |
-| Al menos una mecánica física (Rigidbody) | ⬜ | Balanzas con pesas |
+| Mínimo dos puzles o mecánicas distintas | ✅ | Balanza con pesas, nota con el código y cubos numerados |
+| Al menos una mecánica física (Rigidbody) | ✅ | Balanza con pesas: el peso real de los Rigidbody inclina el brazo |
 | Menú de inicio | ⬜ | |
 | Pantalla final al escapar | ⬜ | Al abrirse la puerta |
 | Sonido (efectos y/o música) | ⬜ | |
-| Feedback de las acciones del jugador | ⬜ | Balanza que se equilibra, cubo liberado, luz roja al fallar, puerta que se abre |
+| Feedback de las acciones del jugador | 🟨 | Hecho: punto de mira, brazo de la balanza que se inclina, cubos que encajan con una transición, luz roja que parpadea al fallar, puerta que se abre. Falta: sonido y partículas |
 | Al menos una pieza de arte propia o retocada | ⬜ | Ver [Arte propio](#arte-propio) |
 | Build para Windows en `.zip` | ⬜ | |
 
@@ -113,21 +130,45 @@ El jugador está encerrado en un **laboratorio**. Para escapar tiene que equilib
 
 ## Arquitectura y estructura del código
 
-<!-- TODO: explicar la arquitectura (sistema de interacción, gestión de puzles, eventos, GameManager...) y por qué. -->
-
 ```
 Assets/
-├── Scenes/      # Escenas del juego
-├── Scripts/     # Código C#
-├── Prefabs/     # Objetos reutilizables
-├── Art/         # Modelos, materiales y texturas
-├── Audio/       # Música y efectos
-└── Settings/    # Configuración de URP y post-procesado
+├── Inputs/         # Mapa de acciones del Input System (PlayerControls)
+├── Prefabs/        # Player, Balanza, CuboNumerado, CodeLock, Puerta
+├── Scenes/         # Laboratorio
+├── Scripts/
+│   ├── Player/       # FirstPersonController
+│   ├── Interaction/  # Grabbable, ObjectGrabber
+│   ├── Puzzles/      # ScaleBalance, ScalePlate, NumberCube, CubeSlot, CodeLock, Door
+│   └── UI/           # Crosshair
+├── Settings/       # Configuración de URP y post-procesado
+└── TextMesh Pro/   # Recursos de TextMesh Pro (números de los cubos)
 ```
 
-Decisiones técnicas:
+Todo el código está en el namespace `EscapeRoomLab` y comentado en español.
+
+### Scripts
+
+| Script | Responsabilidad |
+|---|---|
+| `FirstPersonController` | Movimiento con `CharacterController`, gravedad y vista con el ratón (el cuerpo gira en horizontal y la cámara en vertical). |
+| `Grabbable` | Marca un objeto con Rigidbody como agarrable y restaura su física al soltarlo. Avisa con el evento `Grabbed`. |
+| `ObjectGrabber` | Raycast desde la cámara (con una esfera de margen para objetos pequeños). Mueve el objeto agarrado dando velocidad al Rigidbody y lo rota con el ratón. |
+| `Crosshair` | Punto de mira que crece al apuntar a algo agarrable y se oculta al sostener un objeto. |
+| `ScalePlate` | Trigger sobre un platillo que suma la masa de los Rigidbody que tiene encima (ignora los que se llevan en la mano). |
+| `ScaleBalance` | Compara los dos platillos, inclina el brazo y lanza `onBalanced` al mantenerse equilibrada. |
+| `NumberCube` | Número del cubo y orientación de su cara (dirección del número y de su parte de arriba). |
+| `CubeSlot` | Encaja un cubo bien orientado con una transición. Lo libera si el jugador lo coge y lo expulsa si el código falla. |
+| `CodeLock` | Comprueba el orden de los cubos de las ranuras; al acertar abre la puerta y al fallar hace parpadear la luz. |
+| `Door` | Abre la puerta girando sobre su bisagra con una curva de animación. |
+
+### Decisiones técnicas
+
+- **Puzles desacoplados con `UnityEvent`.** Cada puzle avisa con un evento (`onBalanced`, `onUnlocked`, `onCubePlaced`...) y lo que ocurre después se configura en el Inspector. Así la balanza no necesita saber qué cubo libera ni el candado qué puerta abre, y se pueden añadir sonidos o partículas sin tocar código.
+- **Objetos agarrados movidos con física.** En lugar de teletransportar el objeto a la mano, se le da velocidad hacia el punto de agarre. Así sigue chocando con paredes y muebles y se puede soltar con algo de inercia.
+- **Balanza por código, sin *joints*.** El peso se lee de los Rigidbody reales, pero la inclinación del brazo se calcula por código. Es más estable y fácil de ajustar que simularla con articulaciones físicas.
+- **Configuración desde el Inspector.** Velocidades, ángulos, tolerancias y colores son campos `[SerializeField]` con `Tooltip`, para ajustar el juego sin recompilar.
 - **URP**, para trabajar la iluminación y el post-procesado con buen rendimiento.
-- **Input System**, en lugar del Input Manager clásico, con un único mapa de acciones.
+- **Input System** con `InputActionReference`: las acciones se asignan en el Inspector y los scripts no dependen del nombre del asset de input.
 
 ## Arte, sonido y assets externos
 
@@ -139,23 +180,57 @@ Decisiones técnicas:
 
 | Asset | Autor / fuente | Licencia | Uso en el juego |
 |---|---|---|---|
-| | | | |
+| TextMesh Pro (fuente Liberation Sans) | Unity Technologies | Unity Companion License / SIL OFL | Números de los cubos |
+| <!-- TODO: modelos, texturas, sonidos... --> | | | |
 
 ## Proceso de desarrollo
 
-<!-- TODO: resumen del proceso: idea inicial, cómo se ajustó el alcance, problemas encontrados y cómo se resolvieron. -->
+### Planificación y alcance
+
+El plazo de entrega es el **lunes 05/10/2026 a las 17:00**, pero por disponibilidad personal solo puedo trabajar en la prueba hasta las **13:00** de ese día. Con ese margen se priorizó tener cuanto antes el juego **completo en gris** (de principio a fin, sin arte) y dejar el arte, el sonido y el pulido para el final:
+
+| Cuándo | Objetivo |
+|---|---|
+| Sábado | Jugador, agarre de objetos, balanza, cubos, cerradura y puerta |
+| Domingo mañana | Nota, menú de inicio, pantalla final y primera build |
+| Domingo tarde y noche | Montar el laboratorio, pieza de arte propia, sonido, feedback y build casi definitiva |
+| Lunes mañana | Solo arreglos pequeños, build final, documentación y entrega con margen |
+
+Recortes decididos para llegar: empezar con **una sola balanza** (el script permite añadir más duplicando el prefab), puerta animada por código en lugar de Animator, feedback con sonidos, luces y partículas sencillas, y sin extras caros como multijugador o cinemáticas. Sin salto ni sprint: en un escape room pequeño no aportan.
+
+### Pasos
 
 1. **Preparación:** creación del proyecto con la plantilla 3D (URP) de Unity 6, configuración del `.gitignore` y del repositorio.
 2. **Diseño:** definición del flujo del juego (balanzas → cubos → nota → puerta). Las partes más costosas, como el número de balanzas, se dejaron abiertas para ajustar el alcance a los 4 días.
+3. **Base jugable:** jugador en primera persona y sistema para coger, soltar y rotar objetos con física, que es la base de todos los puzles. Después se añadió un punto de mira y un margen de puntería porque costaba coger los objetos pequeños.
+4. **Puzle físico:** balanza que suma la masa real de las pesas e inclina el brazo. Se monta primero una sola balanza en gris; añadir más es duplicar el prefab.
+5. **Cubos, código y puerta:** ranuras que encajan los cubos según su orientación, cerradura que comprueba el orden y puerta que se abre.
+6. **Vitrina y nota:** vitrina de cristal que se abre al equilibrar la balanza, reutilizando el script `Door` de la puerta (sin código nuevo), y nota con el código que se coge y se rota para leerla. Con esto el juego ya se puede completar de principio a fin en gris.
+
+### Problemas encontrados
+
+- **Cámara del jugador demasiado alta y duplicada.** La posición de la cámara es relativa al centro de la cápsula, no a los pies, así que la altura de los ojos era 0.6 y no 1.6. Además había que borrar la Main Camera de la escena (el prefab trae la suya) y ponerle el tag `MainCamera`.
+- **Tecla de interactuar lenta.** La acción `Interact` de la plantilla tenía la interacción *Hold*, que obliga a mantener la `E` un momento. Se quitó para que responda al pulsar.
+- **Script del jugador fuera del prefab.** El `FirstPersonController` se había añadido a la copia de la escena y no al prefab. Se aplicó al prefab con *Overrides → Apply All* antes de hacer el commit.
+- **Balanza invertida.** El brazo y los platillos se movían en sentidos contrarios porque el script daba por hecho en qué extremo del brazo estaba cada platillo. Se cambió para que lo detecte solo, así funciona con cualquier orientación.
+- **Cubos que volvían a encajar solos.** Al fallar el código, los cubos expulsados volvían a encajar en el mismo instante: al quitarles el modo kinemático, Unity reevalúa el trigger como si el cubo saliera y volviera a entrar. Se resolvió marcando el cubo expulsado para que no encaje en ninguna ranura hasta que el jugador lo vuelva a coger.
+- **Cerradura sin ranuras.** El campo de ranuras del `CodeLock` estaba vacío. Se cambió el script para que, si no se asignan, use automáticamente las ranuras hijas en el orden de la jerarquía.
+- **Cubos que parecían no encajar.** Las ranuras eran cubos visibles del mismo tamaño que los cubos numerados, así que al encajar no se notaba nada. La solución es quitar el modelo de las ranuras y agrandar su trigger; además se añadieron mensajes en la consola para comprobar cuándo encaja cada cubo. La luz de la cerradura tampoco estaba asignada, así que fallar el código no mostraba nada.
+- **Eventos mal conectados en el Inspector.** La puerta no se abría porque en el evento se había arrastrado el prefab (o el script) desde el panel Project en lugar del objeto de la escena, y se había elegido una función de `GameObject` en lugar de `Door.Open()`. Además, la hoja de la puerta no era hija de la bisagra.
+- **Bisagra que parecía girar desde el centro.** Era solo la herramienta del editor en modo *Center*: en modo *Pivot* se ve que la bisagra está en el borde de la puerta.
 
 ## Registro de tiempo
 
 El tiempo se mide con [Clockify](https://clockify.me).
 
-| Día | Horario | Horas | Tareas |
-|---|---|---|---|
-| 03/10/2026 | <!-- TODO --> | 1 h 55 min | Gestión y puesta en marcha del proyecto: creación con la plantilla 3D (URP), `.gitignore`, repositorio, diseño de los puzles y README |
-| **Total** | | **1 h 55 min** | |
+| Día | Horas | Tareas |
+|---|---|---|
+| 03/10/2026 | 2 h | Gestión y puesta en marcha del proyecto: creación con la plantilla 3D (URP), `.gitignore`, repositorio, diseño de los puzles y README |
+| 03/10/2026 | 1 h | Personaje en primera persona: movimiento, vista, coger y rotar objetos |
+| 03/10/2026 | 1 h 30 min | Balanza y pesas |
+| 03/10/2026 | 1 h 15 min | Cubos numerados, ranuras, cerradura de código y puerta |
+| 03/10/2026 | 1 h | Vitrina que abre la balanza y nota con el código |
+| **Total** | **6 h 45 min** | |
 
 ## Uso de la IA
 
@@ -163,23 +238,56 @@ El tiempo se mide con [Clockify](https://clockify.me).
 
 | Herramienta | Para qué |
 |---|---|
-| Claude Code (Claude Opus 5.5) | Revisión de configuración, documentación, apoyo con el código |
+| Claude Code (Claude Opus 5.5), desde la extensión de VS Code | Planificación, código C#, diagnóstico de errores, git y documentación |
 | <!-- TODO: otras (generación de imágenes, audio...) --> | |
+
+### Cómo trabajé con la IA
+
+El reparto de trabajo fue siempre el mismo: yo decidía qué quería conseguir y montaba los objetos en el editor de Unity; la IA proponía el enfoque, escribía los scripts y me explicaba cómo configurarlos. Después yo probaba en Unity y, si algo fallaba, le describía lo que veía o le pegaba el error de la consola. Como los archivos de escena y prefab de Unity son texto, la IA podía leerlos para comprobar cómo había montado los objetos y encontrar el fallo.
 
 ### Ejemplos concretos
 
+**Planificación y documentación**
 - **Idea general del juego y puzles.** Propuso varias ambientaciones y mecánicas posibles. Elegí el laboratorio con balanzas y cubos numerados, y la IA ayudó a detectar decisiones pendientes como el número de balanzas o el uso de colores para ligar cada balanza con su cubo.
-- **Estructura de este README.** Generó la estructura de la documentación a partir del enunciado de la prueba.
+- **Hoja de ruta.** A partir del diseño propuso el orden de trabajo (primero el juego completo en gris, después arte y sonido). Cuando le dije que solo podía trabajar hasta el lunes a las 13:00, reajustó el plan por días y propuso recortes concretos, como empezar con una sola balanza.
+- **Estructura de este README.** Generó la estructura de la documentación a partir del enunciado de la prueba y la fue actualizando con el progreso.
+
+**Personaje en primera persona**
+- **Revisión de lo que ya tenía.** Antes de escribir código, revisó el prefab y los inputs que había creado. Me recomendó reutilizar el mapa de acciones de la plantilla (que ya tenía `Move`, `Look` e `Interact`) y no llamar al asset `PlayerInput`, porque choca con un componente del Input System del mismo nombre.
+- **Script `FirstPersonController`.** Lo escribió con `CharacterController`, gravedad, vista con el ratón limitada a ±80° y cursor bloqueado. Usó `InputActionReference` para asignar las acciones desde el Inspector. Dejó fuera el salto y el sprint porque no aportan en un escape room.
+- **Puesta en marcha en la escena.** Al preguntarle cómo probarlo, revisó la escena y el prefab y detectó tres problemas antes de darle a Play: la cámara duplicada en la escena, la cámara del jugador 60 cm por encima de la cabeza y la falta del tag `MainCamera`.
+
+**Coger y rotar objetos**
+- **Agarre con física.** Diseñó el agarre moviendo el objeto con velocidad en lugar de teletransportarlo, para que siga chocando con el escenario. Añadió la acción `Rotate` al mapa de input y quitó la interacción *Hold* de `Interact`, que hacía que la `E` respondiera tarde.
+- **Punto de mira y ayuda para apuntar.** Le comenté que costaba coger los objetos pequeños. Añadió un punto de mira que crece al apuntar a algo agarrable y un segundo intento de detección con una esfera de 10 cm de radio cuando el rayo no da en el objeto.
+
+**Puzles**
+- **Balanza y pesas.** Propuso calcular la inclinación por código a partir de la masa real de los Rigidbody, en lugar de usar *joints* físicos, que son más difíciles de ajustar. También me explicó qué significa "conectar las referencias" en el Inspector.
+- **Cubos, ranuras, cerradura y puerta.** Escribió los cuatro scripts y me indicó qué tipo de objeto de Unity crear para cada parte (objeto vacío, cubo, luz, trigger) y cómo colocarlos.
+- **Diagnóstico leyendo los archivos de Unity.** Cuando la puerta no se abría, revisó los archivos `.unity` y `.prefab` y detectó que el evento apuntaba al prefab del panel Project en lugar del objeto de la escena, que la función elegida era la de `GameObject` en lugar de `Door.Open()` y que la hoja de la puerta no era hija de la bisagra.
+
+**Git**
+- **Commits.** Propuso cómo dividir el trabajo en commits pequeños, uno por funcionalidad, y sus mensajes. Me explicó cómo separar el título del detalle con varios `-m`. Antes de cada commit revisaba que no se colaran cambios de otra funcionalidad y que los `.meta` fueran incluidos. Los commits hechos con su ayuda llevan la línea `Co-Authored-By: Claude`.
+- **Renombrar la escena.** Me recomendó renombrarla desde Unity y no desde el explorador de archivos, para conservar su identificador interno (GUID) y no romper las referencias.
 <!-- TODO: más ejemplos a lo largo del desarrollo -->
 
 ### Cuándo la IA no dio lo que necesitaba
 
 - **Primera versión del README.** La primera versión se generó sin el enunciado y era genérica: no incluía el registro de tiempo, el apartado de IA ni los assets externos. La resolví pasándole como contexto el PDF del enunciado y el diseño de los puzles.
+- **Balanza invertida.** La primera versión del script suponía una orientación concreta del brazo y, en mi escena, brazo y platillos se movían al revés. Al describirle el fallo, cambió el script para que detecte solo en qué lado está cada platillo.
+- **Cubos que volvían a encajar.** La primera versión de las ranuras volvía a encajar al instante los cubos expulsados tras un código incorrecto. Tras probarlo y explicárselo, identificó la causa (el cambio de modo kinemático reevalúa el trigger) y cambió el enfoque.
+- **Cerradura sin ranuras.** El script exigía asignar las ranuras a mano y saltaba un error si se olvidaba. Al pegarle el error de la consola, lo cambió para que las busque solo entre los hijos.
+- **Ningún aviso al encajar los cubos.** Al principio no había forma de saber si un cubo había encajado y parecía que no pasaba nada. Al revisar la escena encontró que la luz de la cerradura no estaba asignada y que la puerta estaba mal conectada, y añadió mensajes en la consola para comprobar cuándo encaja cada cubo y si el código es correcto.
+- **Código sin probar.** La IA no puede ejecutar Unity, así que nunca probó sus scripts: cada cambio lo probé yo en el editor. Los fallos de arriba solo aparecieron al jugar.
 <!-- TODO: más casos -->
 
 ## Posibles mejoras
 
-<!-- TODO: qué se añadiría con más tiempo. -->
+<!-- TODO: completar al final -->
+
+- **Sensibilidad para mando.** La vista está ajustada para el ratón; con el stick derecho gira muy despacio. Haría falta una sensibilidad separada para el mando.
+- **Más balanzas.** Una balanza por cubo, cada una con su color, para ligar visualmente cada balanza con el cubo que libera.
+- **Texto de ayuda al apuntar.** Un indicador del tipo "E — Coger" junto al punto de mira, aprovechando la propiedad `LookTarget` que ya existe.
 
 ---
 
