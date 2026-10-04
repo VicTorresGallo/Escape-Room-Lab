@@ -55,6 +55,9 @@ namespace EscapeRoomLab
 
         public bool IsHolding => heldObject != null;
 
+        /// <summary>True mientras se mantiene Rotate con un objeto en la mano. Lo usa InteractionPrompt.</summary>
+        public bool IsRotating { get; private set; }
+
         /// <summary>
         /// Objeto agarrable al que apunta el jugador en este momento (null si no hay ninguno).
         /// Lo usa el punto de mira para cambiar de aspecto.
@@ -196,10 +199,10 @@ namespace EscapeRoomLab
         /// </summary>
         private void HandleRotation()
         {
-            bool rotating = IsHolding && rotateAction.action.IsPressed();
-            playerController.LookEnabled = !rotating;
+            IsRotating = IsHolding && rotateAction.action.IsPressed();
+            playerController.LookEnabled = !IsRotating;
 
-            if (!rotating)
+            if (!IsRotating)
             {
                 return;
             }
