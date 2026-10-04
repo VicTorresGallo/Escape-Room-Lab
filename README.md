@@ -26,7 +26,11 @@ Minijuego 3D para PC de tipo *escape room*, desarrollado en Unity como prueba t�
 
 El jugador está encerrado en un **laboratorio**. Para escapar tiene que equilibrar unas balanzas con las pesas que encuentre por la sala. Cada balanza equilibrada libera un cubo con un número. Después debe encontrar una nota escondida con el código **3496** y encajar los cubos en ese orden, bien orientados, para abrir la puerta.
 
-<!-- TODO: elemento narrativo (por qué está encerrado el jugador). -->
+### Historia
+
+El jugador es un periodista que investiga los experimentos del **Dr. Vidal**. Durante la visita, Vidal le ofrece un café drogado y el jugador despierta en su laboratorio con la puerta sellada. Vidal no confía en las llaves: su cerradura solo se abre con un código que esconde entre sus pesas y sus notas, y que el jugador debe descubrir antes de que vuelva.
+
+La historia se presenta en el menú de inicio y se cierra en la pantalla final: el jugador escapa justo cuando se oyen pasos en el pasillo, con todo lo que ha visto en la memoria para destapar los planes de Vidal.
 
 ### Flujo del juego
 
@@ -52,7 +56,7 @@ El jugador está encerrado en un **laboratorio**. Para escapar tiene que equilib
 | Mirar | Ratón |
 | Coger / soltar objeto | `E` |
 | Rotar el objeto que se sostiene | Mantener clic derecho y mover el ratón |
-| Pausa | `Esc` <!-- TODO: pendiente de implementar --> |
+| Pausa / continuar | `Esc` |
 
 ## Cómo ejecutar el proyecto
 
@@ -65,7 +69,9 @@ El jugador está encerrado en un **laboratorio**. Para escapar tiene que equilib
 1. Clona el repositorio.
 2. En **Unity Hub**, pulsa **Add → Add project from disk** y selecciona la carpeta `EscapeRoomLab`.
 3. Ábrelo con Unity **6000.6.4f1**. La primera vez tarda unos minutos porque Unity regenera la carpeta `Library/`.
-4. Abre la escena `Assets/Scenes/Laboratorio.unity` y pulsa **Play**. <!-- TODO: cambiar a MainMenu cuando exista el menú -->
+4. Abre la escena `Assets/Scenes/MainMenu.unity` y pulsa **Play**.
+
+Para generar la build: **File → Build Profiles**, perfil **Windows** → **Build**. El perfil ya tiene las escenas en orden: `MainMenu`, `Laboratorio` y `Final`.
 
 > **Nota:** si Unity pide importar *TMP Essentials*, no hace falta: ya están incluidos en `Assets/TextMesh Pro/`.
 
@@ -89,7 +95,11 @@ El jugador está encerrado en un **laboratorio**. Para escapar tiene que equilib
 | Puerta que se abre con el código correcto | ✅ Hecho |
 | Vitrina que se abre al equilibrar la balanza y libera los cubos | ✅ Hecho |
 | Nota con el código, que se coge y se rota para leerla | ✅ Hecho (falta esconderla) |
-| Menú de inicio y pantalla final | ⬜ Pendiente |
+| Menú de inicio con la historia, y pantalla final al escapar | ✅ Hecho |
+| Menú de pausa con vuelta al menú principal | ✅ Hecho |
+| Fundido a negro entre escenas | ✅ Hecho |
+| Sonido y música | ⬜ Pendiente |
+| Laboratorio ambientado (arte) | ⬜ Pendiente |
 
 ### Diseño
 
@@ -110,12 +120,12 @@ El jugador está encerrado en un **laboratorio**. Para escapar tiene que equilib
 |---|---|---|
 | Mínimo dos puzles o mecánicas distintas | ✅ | Balanza con pesas, nota con el código y cubos numerados |
 | Al menos una mecánica física (Rigidbody) | ✅ | Balanza con pesas: el peso real de los Rigidbody inclina el brazo |
-| Menú de inicio | ⬜ | |
-| Pantalla final al escapar | ⬜ | Al abrirse la puerta |
+| Menú de inicio | ✅ | Escena `MainMenu`: título, historia, botones Jugar y Salir |
+| Pantalla final al escapar | ✅ | Escena `Final`: se carga con un fundido al terminar de abrirse la puerta |
 | Sonido (efectos y/o música) | ⬜ | |
 | Feedback de las acciones del jugador | 🟨 | Hecho: punto de mira, brazo de la balanza que se inclina, cubos que encajan con una transición, luz roja que parpadea al fallar, puerta que se abre. Falta: sonido y partículas |
 | Al menos una pieza de arte propia o retocada | ⬜ | Ver [Arte propio](#arte-propio) |
-| Build para Windows en `.zip` | ⬜ | |
+| Build para Windows en `.zip` | 🟨 | Primera build generada y probada; falta la definitiva y el `.zip` |
 
 **Extras opcionales**
 
@@ -126,21 +136,23 @@ El jugador está encerrado en un **laboratorio**. Para escapar tiene que equilib
 | Partículas (Particle System / VFX Graph) | ⬜ | |
 | Iluminación trabajada y post-procesado | ⬜ | |
 | Shaders o materiales propios (Shader Graph) | ⬜ | |
-| Elemento narrativo / pantalla final cuidada | ⬜ | |
+| Elemento narrativo / pantalla final cuidada | 🟨 | Historia del Dr. Vidal en el menú y en la pantalla final |
 
 ## Arquitectura y estructura del código
 
 ```
 Assets/
+├── Canvas/         # Prefab Menú: Canvas de las pantallas de menú
 ├── Inputs/         # Mapa de acciones del Input System (PlayerControls)
-├── Prefabs/        # Player, Balanza, CuboNumerado, CodeLock, Puerta
-├── Scenes/         # Laboratorio
+├── Materials/      # Cristal
+├── Prefabs/        # Player, Balanza, CuboNumerado, CodeLock, Puerta, Vitrina, Nota
+├── Scenes/         # MainMenu, Laboratorio, Final
 ├── Scripts/
 │   ├── Player/       # FirstPersonController
 │   ├── Interaction/  # Grabbable, ObjectGrabber
 │   ├── Puzzles/      # ScaleBalance, ScalePlate, NumberCube, CubeSlot, CodeLock, Door
-│   └── UI/           # Crosshair
-├── Settings/       # Configuración de URP y post-procesado
+│   └── UI/           # Crosshair, SceneLoader, PauseMenu
+├── Settings/       # Configuración de URP, post-procesado y Build Profile de Windows
 └── TextMesh Pro/   # Recursos de TextMesh Pro (números de los cubos)
 ```
 
@@ -159,13 +171,16 @@ Todo el código está en el namespace `EscapeRoomLab` y comentado en español.
 | `NumberCube` | Número del cubo y orientación de su cara (dirección del número y de su parte de arriba). |
 | `CubeSlot` | Encaja un cubo bien orientado con una transición. Lo libera si el jugador lo coge y lo expulsa si el código falla. |
 | `CodeLock` | Comprueba el orden de los cubos de las ranuras; al acertar abre la puerta y al fallar hace parpadear la luz. |
-| `Door` | Abre la puerta girando sobre su bisagra con una curva de animación. |
+| `Door` | Abre una puerta girando sobre su bisagra con una curva de animación. Se usa para la puerta de salida y para la vitrina. |
+| `SceneLoader` | Cambia de escena con un fundido a negro, cierra el juego y libera el cursor en los menús. |
+| `PauseMenu` | Con `Esc` congela el juego, desactiva el control del jugador y muestra el panel de pausa. |
 
 ### Decisiones técnicas
 
 - **Puzles desacoplados con `UnityEvent`.** Cada puzle avisa con un evento (`onBalanced`, `onUnlocked`, `onCubePlaced`...) y lo que ocurre después se configura en el Inspector. Así la balanza no necesita saber qué cubo libera ni el candado qué puerta abre, y se pueden añadir sonidos o partículas sin tocar código.
 - **Objetos agarrados movidos con física.** En lugar de teletransportar el objeto a la mano, se le da velocidad hacia el punto de agarre. Así sigue chocando con paredes y muebles y se puede soltar con algo de inercia.
 - **Balanza por código, sin *joints*.** El peso se lee de los Rigidbody reales, pero la inclinación del brazo se calcula por código. Es más estable y fácil de ajustar que simularla con articulaciones físicas.
+- **Pausa con `timeScale` y scripts desactivados.** `Time.timeScale = 0` congela la física y las animaciones, pero el ratón no depende del tiempo, así que además se desactivan los scripts del jugador. Los fundidos usan tiempo sin escalar para funcionar con el juego en pausa.
 - **Configuración desde el Inspector.** Velocidades, ángulos, tolerancias y colores son campos `[SerializeField]` con `Tooltip`, para ajustar el juego sin recompilar.
 - **URP**, para trabajar la iluminación y el post-procesado con buen rendimiento.
 - **Input System** con `InputActionReference`: las acciones se asignan en el Inspector y los scripts no dependen del nombre del asset de input.
@@ -206,6 +221,7 @@ Recortes decididos para llegar: empezar con **una sola balanza** (el script perm
 4. **Puzle físico:** balanza que suma la masa real de las pesas e inclina el brazo. Se monta primero una sola balanza en gris; añadir más es duplicar el prefab.
 5. **Cubos, código y puerta:** ranuras que encajan los cubos según su orientación, cerradura que comprueba el orden y puerta que se abre.
 6. **Vitrina y nota:** vitrina de cristal que se abre al equilibrar la balanza, reutilizando el script `Door` de la puerta (sin código nuevo), y nota con el código que se coge y se rota para leerla. Con esto el juego ya se puede completar de principio a fin en gris.
+7. **Menús y build:** menú de inicio con la historia, pantalla final, menú de pausa y fundidos entre escenas, con un único script (`SceneLoader`) reutilizado en todas las escenas. Se generó la primera build para Windows para detectar pronto los problemas que solo aparecen fuera del editor.
 
 ### Problemas encontrados
 
@@ -218,6 +234,9 @@ Recortes decididos para llegar: empezar con **una sola balanza** (el script perm
 - **Cubos que parecían no encajar.** Las ranuras eran cubos visibles del mismo tamaño que los cubos numerados, así que al encajar no se notaba nada. La solución es quitar el modelo de las ranuras y agrandar su trigger; además se añadieron mensajes en la consola para comprobar cuándo encaja cada cubo. La luz de la cerradura tampoco estaba asignada, así que fallar el código no mostraba nada.
 - **Eventos mal conectados en el Inspector.** La puerta no se abría porque en el evento se había arrastrado el prefab (o el script) desde el panel Project en lugar del objeto de la escena, y se había elegido una función de `GameObject` en lugar de `Door.Open()`. Además, la hoja de la puerta no era hija de la bisagra.
 - **Bisagra que parecía girar desde el centro.** Era solo la herramienta del editor en modo *Center*: en modo *Pivot* se ve que la bisagra está en el borde de la puerta.
+- **"No cameras rendering" en los menús.** Al borrar la cámara de las escenas de menú, la interfaz se seguía viendo (Canvas en modo *Overlay*), pero Unity avisaba de que ninguna cámara dibujaba la escena. Se añadió una cámara con fondo negro y sin Audio Listener.
+- **Escenas fuera de la build.** Las escenas nuevas no estaban en la lista de la build, así que el juego habría arrancado en el laboratorio y no habría encontrado la pantalla final. Se añadieron en el orden `MainMenu`, `Laboratorio`, `Final`.
+- **Fundido y panel de pausa diminutos.** La pausa funcionaba pero no se veía el panel, y el fundido era un cuadrado pequeño en el centro. Ambos tenían los anchors estirados a toda la pantalla pero con márgenes negativos que les restaban casi todo el tamaño. Se pusieron los márgenes (Left, Top, Right y Bottom) a 0.
 
 ## Registro de tiempo
 
@@ -230,7 +249,9 @@ El tiempo se mide con [Clockify](https://clockify.me).
 | 03/10/2026 | 1 h 30 min | Balanza y pesas |
 | 03/10/2026 | 1 h 15 min | Cubos numerados, ranuras, cerradura de código y puerta |
 | 03/10/2026 | 1 h | Vitrina que abre la balanza y nota con el código |
-| **Total** | **6 h 45 min** | |
+| 04/10/2026 | 1 h 15 min | Escenas y menús: menú de inicio, pantalla final, menú de pausa y fundidos |
+| 04/10/2026 | 20 min | Primera build para Windows |
+| **Total** | **8 h 20 min** | |
 
 ## Uso de la IA
 
@@ -266,6 +287,12 @@ El reparto de trabajo fue siempre el mismo: yo decidía qué quería conseguir y
 - **Cubos, ranuras, cerradura y puerta.** Escribió los cuatro scripts y me indicó qué tipo de objeto de Unity crear para cada parte (objeto vacío, cubo, luz, trigger) y cómo colocarlos.
 - **Diagnóstico leyendo los archivos de Unity.** Cuando la puerta no se abría, revisó los archivos `.unity` y `.prefab` y detectó que el evento apuntaba al prefab del panel Project en lugar del objeto de la escena, que la función elegida era la de `GameObject` en lugar de `Door.Open()` y que la hoja de la puerta no era hija de la bisagra.
 
+**Menús, pausa y build**
+- **Menús y fundidos.** Escribió un único script, `SceneLoader`, para cambiar de escena con fundido, salir del juego y liberar el cursor, y me explicó qué objetos de UI crear en cada pantalla y cómo conectar los botones. También propuso el texto narrativo del menú, que adapté.
+- **Menú de pausa.** Añadió la acción `Pause` al input y el script `PauseMenu`. Me explicó por qué no basta con `Time.timeScale = 0` (el ratón no depende del tiempo) y por qué los fundidos deben usar tiempo sin escalar.
+- **Revisión de la configuración de la build.** Comprobó en los archivos del proyecto que las escenas estaban en el orden correcto, que el perfil de Windows no estaba en modo *Development* y me avisó de que el perfil usa su propia lista de escenas.
+- **Diagnóstico de la interfaz.** Cuando el panel de pausa no se veía, leyó la escena y encontró que tanto el panel como el fundido tenían márgenes negativos que los dejaban casi sin tamaño.
+
 **Git**
 - **Commits.** Propuso cómo dividir el trabajo en commits pequeños, uno por funcionalidad, y sus mensajes. Me explicó cómo separar el título del detalle con varios `-m`. Antes de cada commit revisaba que no se colaran cambios de otra funcionalidad y que los `.meta` fueran incluidos. Los commits hechos con su ayuda llevan la línea `Co-Authored-By: Claude`.
 - **Renombrar la escena.** Me recomendó renombrarla desde Unity y no desde el explorador de archivos, para conservar su identificador interno (GUID) y no romper las referencias.
@@ -278,6 +305,7 @@ El reparto de trabajo fue siempre el mismo: yo decidía qué quería conseguir y
 - **Cubos que volvían a encajar.** La primera versión de las ranuras volvía a encajar al instante los cubos expulsados tras un código incorrecto. Tras probarlo y explicárselo, identificó la causa (el cambio de modo kinemático reevalúa el trigger) y cambió el enfoque.
 - **Cerradura sin ranuras.** El script exigía asignar las ranuras a mano y saltaba un error si se olvidaba. Al pegarle el error de la consola, lo cambió para que las busque solo entre los hijos.
 - **Ningún aviso al encajar los cubos.** Al principio no había forma de saber si un cubo había encajado y parecía que no pasaba nada. Al revisar la escena encontró que la luz de la cerradura no estaba asignada y que la puerta estaba mal conectada, y añadió mensajes en la consola para comprobar cuándo encaja cada cubo y si el código es correcto.
+- **Panel de pausa invisible.** Su primera sugerencia (corregir la escala del panel) no bastó: el panel seguía sin verse. Al contarle que el fundido también salía como un cuadrado pequeño, volvió a leer la escena y encontró la causa real, los márgenes negativos de ambos objetos.
 - **Código sin probar.** La IA no puede ejecutar Unity, así que nunca probó sus scripts: cada cambio lo probé yo en el editor. Los fallos de arriba solo aparecieron al jugar.
 <!-- TODO: más casos -->
 
