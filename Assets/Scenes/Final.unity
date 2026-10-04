@@ -382,6 +382,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 596474581505862966, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 596474581505862966, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 596474581505862966, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 596474581505862966, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -84.999985
+      objectReference: {fileID: 0}
+    - target: {fileID: 596474581505862966, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3498641923834187008, guid: a5902f249e845fc4eb458cce73492100, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 1
@@ -526,17 +546,53 @@ PrefabInstance:
       propertyPath: m_Name
       value: BotonMenu
       objectReference: {fileID: 0}
+    - target: {fileID: 4906077035197421704, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4906077035197421704, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4906077035197421704, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4906077035197421704, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4906077035197421704, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5590795996840043149, guid: a5902f249e845fc4eb458cce73492100, type: 3}
       propertyPath: m_Name
       value: Main
       objectReference: {fileID: 0}
     - target: {fileID: 5629260087683347740, guid: a5902f249e845fc4eb458cce73492100, type: 3}
       propertyPath: m_text
-      value: Has escapado!
+      value: "\xA1Has escapado!"
+      objectReference: {fileID: 0}
+    - target: {fileID: 6976947115285768137, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6976947115285768137, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6976947115285768137, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6976947115285768137, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8408827214209496871, guid: a5902f249e845fc4eb458cce73492100, type: 3}
       propertyPath: m_text
-      value: "Ahora podr\xE1s volver a contarle a las autoridades las maldades que planea el Dr. Vidal. Pero lo m\xE1s importante... Has conseguido sobrevivir para volver a ver a tufamilia."
+      value: "La puerta se cierra a tu espalda justo cuando se oyen pasos al fondo del pasillo. Te llevas en la memoria cada f\xF3rmula y cada nombre de ese laboratorio. Ma\xF1ana, el mundo sabr\xE1 lo que planeaba el Dr. Vidal... y t\xFA estar\xE1s ah\xED para contarlo."
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

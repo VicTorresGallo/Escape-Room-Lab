@@ -382,6 +382,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 596474581505862966, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 596474581505862966, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 596474581505862966, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 596474581505862966, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -101.000015
+      objectReference: {fileID: 0}
+    - target: {fileID: 596474581505862966, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3498641923834187008, guid: a5902f249e845fc4eb458cce73492100, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 1
@@ -522,13 +542,49 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4906077035197421704, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4906077035197421704, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4906077035197421704, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4906077035197421704, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4906077035197421704, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5590795996840043149, guid: a5902f249e845fc4eb458cce73492100, type: 3}
       propertyPath: m_Name
       value: Main
       objectReference: {fileID: 0}
+    - target: {fileID: 6976947115285768137, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6976947115285768137, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6976947115285768137, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6976947115285768137, guid: a5902f249e845fc4eb458cce73492100, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8408827214209496871, guid: a5902f249e845fc4eb458cce73492100, type: 3}
       propertyPath: m_text
-      value: "Despiertas en el laboratorio del Dr. Vidal. La puerta est\xE1 sellada y el sistema de seguridad solo se desactiva con el c\xF3digo correcto. Equilibra, descubre y escapa"
+      value: "Viniste a investigar los experimentos del Dr. Vidal, y el caf\xE9 que te ofreci\xF3 no era solo caf\xE9. Despiertas en su laboratorio con la puerta sellada. Vidal no conf\xEDa en las llaves: su cerradura solo se abre con un c\xF3digo que esconde entre sus pesas y sus notas. Encu\xE9ntralo y escapa antes de que vuelva."
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
