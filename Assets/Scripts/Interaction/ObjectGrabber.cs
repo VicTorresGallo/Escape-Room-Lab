@@ -46,6 +46,12 @@ namespace EscapeRoomLab
         [Tooltip("Grados que gira el objeto por cada píxel que se mueve el ratón.")]
         [SerializeField] private float rotateSensitivity = 0.3f;
 
+        [Header("Sonido")]
+        [Tooltip("AudioSource del jugador para los sonidos de coger y soltar. Opcional.")]
+        [SerializeField] private AudioSource audioSource;
+        [SerializeField] private AudioClip grabClip;
+        [SerializeField] private AudioClip releaseClip;
+
         private Grabbable heldObject;
 
         // Rotación del objeto relativa a la cámara: así gira con el jugador cuando este mira a otro lado.
@@ -88,7 +94,8 @@ namespace EscapeRoomLab
 
         private void OnDisable()
         {
-            Release();
+            // Sin sonido: se desactiva al pausar o al cambiar de escena, no porque el jugador suelte el objeto.
+            Release(playSound: false);
         }
 
         private void Update()
@@ -174,12 +181,13 @@ namespace EscapeRoomLab
 
             // Evita que el objeto empuje al jugador o se meta en su cápsula.
             SetCollisionWithPlayer(heldObject, false);
+            PlayClip(grabClip);
         }
 
         /// <summary>
         /// Suelta el objeto. Conserva su velocidad actual, así que se puede dar un pequeño impulso al soltarlo.
         /// </summary>
-        private void Release()
+        private void Release(bool playSound = true)
         {
             if (!IsHolding)
             {
@@ -190,6 +198,19 @@ namespace EscapeRoomLab
             heldObject.OnReleased();
             heldObject = null;
             playerController.LookEnabled = true;
+
+            if (playSound)
+            {
+                PlayClip(releaseClip);
+            }
+        }
+
+        private void PlayClip(AudioClip clip)
+        {
+            if (audioSource != null && clip != null)
+            {
+                audioSource.PlayOneShot(clip);
+            }
         }
 
         /// <summary>

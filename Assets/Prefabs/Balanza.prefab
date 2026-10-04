@@ -449,16 +449,18 @@ MonoBehaviour:
   leftPlateBody: {fileID: 646095269825654955}
   rightPlateBody: {fileID: 5663873218799466424}
   beam: {fileID: 21609810219088007}
-  armLength: 0.5
   degreesPerKg: 6
   maxAngle: 20
   tiltSpeed: 3
   tolerance: 0.05
-  balanceHoldTime: 0.5
+  balanceHoldTime: 1
   statusLight: {fileID: 0}
   unbalancedColor: {r: 1, g: 0, b: 0, a: 1}
   balancedColor: {r: 0, g: 1, b: 0, a: 1}
   onBalanced:
+    m_PersistentCalls:
+      m_Calls: []
+  onUnbalanced:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &4674979076332901840

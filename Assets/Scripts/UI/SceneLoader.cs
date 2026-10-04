@@ -45,8 +45,13 @@ namespace EscapeRoomLab
                 }
                 else
                 {
-                    fadeGroup.alpha = 0f;
+                    SetFade(0f);
                 }
+            }
+            else
+            {
+                // Sin fundido no hay nada que restaure el volumen si la escena anterior lo dejó a 0.
+                AudioListener.volume = 1f;
             }
         }
 
@@ -91,16 +96,26 @@ namespace EscapeRoomLab
 
         /// <summary>
         /// Cambia la opacidad del fundido de un valor a otro.
+        /// El volumen general baja y sube a la par (fundido a negro = silencio), para que la música
+        /// no se corte de golpe al cambiar de escena.
         /// Usa tiempo sin escalar para funcionar aunque el juego esté en pausa (Time.timeScale = 0).
         /// </summary>
         private IEnumerator Fade(float from, float to)
         {
             for (float time = 0f; time < fadeDuration; time += Time.unscaledDeltaTime)
             {
-                fadeGroup.alpha = Mathf.Lerp(from, to, time / fadeDuration);
+                SetFade(Mathf.Lerp(from, to, time / fadeDuration));
                 yield return null;
             }
-            fadeGroup.alpha = to;
+            SetFade(to);
+        }
+
+        private void SetFade(float alpha)
+        {
+            fadeGroup.alpha = alpha;
+
+            // AudioListener.volume es global y se conserva entre escenas: por eso cada escena lo restaura en su fundido de entrada.
+            AudioListener.volume = 1f - alpha;
         }
     }
 }
