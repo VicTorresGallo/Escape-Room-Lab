@@ -5,8 +5,8 @@ namespace EscapeRoomLab
 {
     /// <summary>
     /// Balanza de dos platillos. Compara la masa de ambos, inclina el brazo hacia el lado
-    /// que más pesa y, cuando los dos pesan lo mismo durante un momento, se da por resuelta
-    /// y lanza el evento OnBalanced (por ejemplo, para liberar un cubo).
+    /// que más pesa y funciona como un interruptor: al equilibrarse lanza onBalanced (abrir la vitrina)
+    /// y al desequilibrarse lanza onUnbalanced (cerrarla).
     ///
     /// Montaje esperado:
     /// - El brazo (beam) gira sobre su eje Z local, con los platillos a lo largo de su eje X
@@ -36,7 +36,7 @@ namespace EscapeRoomLab
         [Header("Equilibrio")]
         [Tooltip("Diferencia de masa (kg) que se considera equilibrada.")]
         [SerializeField] private float tolerance = 0.05f;
-        [Tooltip("Segundos que debe mantenerse equilibrada para resolverse. Evita que cuente una pesa que solo rebota.")]
+        [Tooltip("Segundos que debe mantenerse un estado (equilibrada o no) para cambiar. Evita que una pesa que rebota abra y cierre la vitrina en bucle.")]
         [SerializeField] private float balanceHoldTime = 0.5f;
 
         [Header("Feedback")]
@@ -46,13 +46,19 @@ namespace EscapeRoomLab
         [SerializeField] private Color balancedColor = Color.green;
 
         [Header("Eventos")]
-        [Tooltip("Se lanza una sola vez al equilibrar la balanza: liberar el cubo, sonido, partículas...")]
+        [Tooltip("Se lanza cada vez que la balanza pasa a estar equilibrada: abrir la vitrina, sonido, partículas...")]
         public UnityEvent onBalanced;
+        [Tooltip("Se lanza cada vez que la balanza deja de estar equilibrada: cerrar la vitrina...")]
+        public UnityEvent onUnbalanced;
 
+        /// <summary>Si la balanza está equilibrada ahora mismo.</summary>
+        public bool IsBalanced { get; private set; }
+
+        /// <summary>Si se ha equilibrado alguna vez.</summary>
         public bool IsSolved { get; private set; }
 
         private float currentAngle;
-        private float balancedTimer;
+        private float stateChangeTimer;
         private Quaternion beamStartRotation;
         private Vector3 leftPlateStart;
         private Vector3 rightPlateStart;
@@ -90,35 +96,51 @@ namespace EscapeRoomLab
             float rightMass = rightPlate.TotalMass;
             float difference = leftMass - rightMass;
 
-            if (!IsSolved)
-            {
-                CheckBalance(leftMass, rightMass, difference);
-            }
+            CheckBalance(leftMass, rightMass, difference);
 
             // Girar el brazo un ángulo positivo sobre Z sube su extremo +X. Para que baje el platillo
             // que más pesa, el signo depende de en qué extremo esté el platillo izquierdo.
             float tiltDirection = leftArm < 0f ? 1f : -1f;
 
-            // Una vez resuelta, el brazo se queda nivelado aunque se quiten las pesas.
-            float targetAngle = IsSolved ? 0f : Mathf.Clamp(difference * degreesPerKg * tiltDirection, -maxAngle, maxAngle);
+            float targetAngle = Mathf.Clamp(difference * degreesPerKg * tiltDirection, -maxAngle, maxAngle);
             currentAngle = Mathf.Lerp(currentAngle, targetAngle, tiltSpeed * Time.fixedDeltaTime);
             ApplyTilt(currentAngle);
         }
 
         /// <summary>
-        /// Comprueba si la balanza lleva equilibrada el tiempo suficiente.
+        /// Cambia de estado (equilibrada / desequilibrada) cuando el nuevo estado se mantiene
+        /// durante balanceHoldTime. Ese margen evita que una pesa que rebota abra y cierre la vitrina en bucle.
         /// Exige peso en los dos platillos: con ambos vacíos la diferencia también es 0.
         /// </summary>
         private void CheckBalance(float leftMass, float rightMass, float difference)
         {
-            bool balanced = leftMass > 0f && rightMass > 0f && Mathf.Abs(difference) <= tolerance;
-            balancedTimer = balanced ? balancedTimer + Time.fixedDeltaTime : 0f;
+            bool balancedNow = leftMass > 0f && rightMass > 0f && Mathf.Abs(difference) <= tolerance;
 
-            if (balancedTimer >= balanceHoldTime)
+            if (balancedNow == IsBalanced)
+            {
+                stateChangeTimer = 0f;
+                return;
+            }
+
+            stateChangeTimer += Time.fixedDeltaTime;
+            if (stateChangeTimer < balanceHoldTime)
+            {
+                return;
+            }
+
+            stateChangeTimer = 0f;
+            IsBalanced = balancedNow;
+
+            if (IsBalanced)
             {
                 IsSolved = true;
                 SetStatusColor(balancedColor);
                 onBalanced.Invoke();
+            }
+            else
+            {
+                SetStatusColor(unbalancedColor);
+                onUnbalanced.Invoke();
             }
         }
 
