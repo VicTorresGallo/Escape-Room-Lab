@@ -100,7 +100,7 @@ Para generar la build: **File → Build Profiles**, perfil **Windows** → **Bui
 | Fundido a negro entre escenas | ✅ Hecho |
 | Ayuda contextual de controles (coger, soltar, girar) | ✅ Hecho |
 | Sonido: pasos, coger y soltar, golpes de objetos, vitrina, puerta, código correcto e incorrecto, botones | ✅ Hecho |
-| Música de fondo en el laboratorio | ✅ Hecho (falta asignarla en el menú) |
+| Música de fondo en el laboratorio y en los menús | ✅ Hecho |
 | Balanza como interruptor: la vitrina se abre al equilibrarla y se cierra al desequilibrarla | ✅ Hecho |
 | Laboratorio ambientado (arte) | ⬜ Pendiente |
 
@@ -207,11 +207,11 @@ Todo el código está en el namespace `EscapeRoomLab` y comentado en español.
 |---|---|---|---|
 | TextMesh Pro (fuente Liberation Sans) | Unity Technologies | Unity Companion License / SIL OFL | Números de los cubos y textos de la interfaz |
 | [Impact Sounds](https://kenney.nl/assets/impact-sounds) | Kenney | CC0 | Pasos (`footstep_concrete`), golpes de las pesas (`impactMetal_heavy`) y de los cubos (`impactPunch_medium`) |
-| [Interface Sounds](https://kenney.nl/assets/interface-sounds) | Kenney | CC0 | Coger y soltar (`select_002`, `drop_003`), código correcto (`confirmation_004`), código incorrecto (`error_008`), botones de los menús (`switch_001`, `confirmation_001`) |
+| [Interface Sounds](https://kenney.nl/assets/interface-sounds) | Kenney | CC0 | Coger y soltar (`select_002`, `drop_003`), código correcto (`confirmation_004`), código incorrecto (`error_008`), cubo encajado en su ranura (`glass_004`), botones de los menús (`switch_001`, `confirmation_001`) |
 | [Door creak](https://pixabay.com/sound-effects/?utm_content=100169) | [freesound_community](https://pixabay.com/es/users/freesound_community-46691455/) en Pixabay | Pixabay Content License | Puertas |
 | [Squeaky door](https://pixabay.com/sound-effects/?utm_content=43353) | [freesound_community](https://pixabay.com/es/users/freesound_community-46691455/) en Pixabay | Pixabay Content License | Puertas |
 | Skrzypienie (crujido) | [u_kt8eskwh7o](https://pixabay.com/es/users/u_kt8eskwh7o-44221995/) en Pixabay | Pixabay Content License | Puertas |
-| Hidden Crime | [Universfield](https://pixabay.com/es/users/universfield-28281460/) en Pixabay | Pixabay Content License | Música de fondo del laboratorio, **recortada por mí** |
+| Hidden Crime | [Universfield](https://pixabay.com/es/users/universfield-28281460/) en Pixabay | Pixabay Content License | Música de fondo del laboratorio y de los menús, **recortada por mí** |
 | <!-- TODO: modelos y texturas del laboratorio --> | | | |
 
 **Sobre las licencias:**
