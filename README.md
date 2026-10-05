@@ -24,7 +24,7 @@ Minijuego 3D para PC de tipo *escape room*, desarrollado en Unity como prueba t�
 
 ## Descripción
 
-El jugador está encerrado en un **laboratorio**. Para escapar tiene que equilibrar unas balanzas con las pesas que encuentre por la sala. Cada balanza equilibrada libera un cubo con un número. Después debe encontrar una nota escondida con el código **3496** y encajar los cubos en ese orden, bien orientados, para abrir la puerta.
+El jugador está encerrado en un **laboratorio**. Para escapar tiene que equilibrar una balanza con las pesas que encuentre por la sala; al equilibrarla se abre una vitrina con cuatro cubos numerados. Después debe encontrar una nota escondida con el código **3496** y encajar los cubos en ese orden, bien orientados, para abrir la puerta.
 
 ### Historia
 
@@ -35,8 +35,8 @@ La historia se presenta en el menú de inicio y se cierra en la pantalla final: 
 ### Flujo del juego
 
 1. Menú de inicio y arranque en el laboratorio cerrado.
-2. Explorar la sala, encontrar las pesas y deducir qué pesa necesita cada balanza por su tamaño.
-3. Cada balanza equilibrada desbloquea un cubo con un número.
+2. Explorar la sala, encontrar las pesas y deducir por su tamaño cuáles equilibran la balanza.
+3. Al equilibrar la balanza se abre la vitrina con los cubos numerados.
 4. Encontrar la nota con el código **3496**, escondida en la sala.
 5. Encajar los cubos en las ranuras en ese orden, con el número visible hacia fuera.
 6. La puerta se abre y aparece la pantalla final.
@@ -80,7 +80,7 @@ Para generar la build: **File → Build Profiles**, perfil **Windows** → **Bui
 
 | # | Puzle | Tipo | Qué hace el jugador | Resultado |
 |---|---|---|---|---|
-| 1 | **Balanzas** | Físico (Rigidbody) | Coge pesas de distintos tamaños y las coloca en el platillo hasta equilibrar cada balanza. El tamaño de la pesa indica su peso. | La vitrina de cristal se abre y libera los cubos numerados. |
+| 1 | **Balanza** | Físico (Rigidbody) | Coge pesas de distintos tamaños y las coloca en el platillo hasta equilibrar la balanza. El tamaño de la pesa indica su peso. | La vitrina de cristal se abre y libera los cubos numerados. |
 | 2 | **La nota** | Exploración | Busca por la sala una nota escondida con el código **3496** y la coge y gira para leerla. | Conoce el orden de los cubos. |
 | 3 | **Cubos numerados** | Colocación y orientación | Encaja los cubos en las ranuras en el orden de la nota, girándolos para que el número quede hacia fuera y derecho. | Si es correcto, los cubos se bloquean y se abre la puerta. Si hay un error, la luz parpadea en rojo y los cubos salen expulsados para volver a intentarlo. |
 
@@ -116,10 +116,10 @@ Para generar la build: **File → Build Profiles**, perfil **Windows** → **Bui
 - **El 6 y el 9:** la ranura exige que el número no esté boca abajo, así que la orientación forma parte del puzle: un 6 girado parece un 9.
 - **Pesas que se deducen a simple vista:** cada pesa tiene una masa acorde a su tamaño, para que el jugador pueda razonar qué combinación equilibra la balanza.
 
-### Decisiones pendientes
+### Decisiones de alcance
 
-- **Número de balanzas:** cuatro balanzas (una por cubo) es la opción más costosa de colocar y ajustar. Las alternativas son dos balanzas con dos cubos cada una, o una sola balanza que libere los 4 cubos. El script es el mismo en los tres casos, así que se puede decidir según el tiempo disponible.
-- **Colores de los cubos:** la nota ya da el orden con los números, así que los colores no hacen falta para el código. Pueden servir para ligar cada balanza con su cubo (balanza roja, cubo rojo) y que el jugador entienda qué desbloquea qué.
+- **Una sola balanza.** Cuatro balanzas (una por cubo) era la opción más costosa de colocar y ajustar. Se optó por una balanza que abre una vitrina con los cuatro cubos; el script permite añadir más balanzas duplicando el prefab.
+- **Cubos de un solo color.** La nota ya da el orden con los números, así que no hacían falta colores por cubo. Se usó un único color de acento (naranja) para todos los objetos con los que se interactúa.
 
 ## Requisitos de la prueba
 
@@ -130,7 +130,7 @@ Para generar la build: **File → Build Profiles**, perfil **Windows** → **Bui
 | Menú de inicio | ✅ | Escena `MainMenu`: título, historia, botones Jugar y Salir |
 | Pantalla final al escapar | ✅ | Escena `Final`: se carga con un fundido al terminar de abrirse la puerta |
 | Sonido (efectos y/o música) | ✅ | Música de fondo, pasos, coger y soltar, golpes según la fuerza del choque, vitrina, puerta, código correcto e incorrecto y botones de los menús |
-destello al anclar un cubo, ayuda contextual de controles, brazo de la balanza que se inclina, cubos que encajan con una transición, luz roja que parpadea al fallar, puerta que se abre, sonidos de cada acción y golpes cuyo volumen depende de la fuerza del choque. Falta: partículas |
+| Feedback de las acciones del jugador | 🟨 | Hecho: punto de mira, destello al anclar un cubo, ayuda contextual de controles, brazo de la balanza que se inclina, cubos que encajan con una transición, luz roja que parpadea al fallar, bombilla de la cerradura que cambia de color, puerta que se abre, sonidos de cada acción y golpes cuyo volumen depende de la fuerza del choque. Falta: partículas |
 | Al menos una pieza de arte propia o retocada | ✅ | Pesas modeladas en Blender. Ver [Arte propio](#arte-propio) |
 | Build para Windows en `.zip` | ✅ | [Descarga en Google Drive](https://drive.google.com/drive/folders/166joykuvenDGUOKrfLaLsOWbfPDy-2ou?usp=sharing) |
 
@@ -143,25 +143,27 @@ destello al anclar un cubo, ayuda contextual de controles, brazo de la balanza q
 | Partículas (Particle System / VFX Graph) | ⬜ | |
 | Iluminación trabajada y post-procesado | ✅ | Luz ambiente oscura, lámparas de techo con sombras suaves y panel emisivo, y Global Volume con Bloom, Vignette y Tonemapping |
 | Shaders o materiales propios (Shader Graph) | ⬜ | |
-| Elemento narrativo / pantalla final cuidada | 🟨 | Historia del Dr. Vidal en el menú y en la pantalla final |
+| Elemento narrativo / pantalla final cuidada | ✅ | Historia del Dr. Vidal en el menú de inicio, en la pantalla final y en la nota con el código, firmada por él |
 
 ## Arquitectura y estructura del código
 
 ```
+ArtSource/            # Archivo fuente de Blender de las pesas (Pesa.blend)
 Assets/
-├── Audio/          # Music/ y SFX/ (Player, Objects, Puzzles, UI)
-├── Inputs/         # Mapa de acciones del Input System (PlayerControls)
-├── Art/           # Models/Pesas (modelo propio de Blender)
-├── Materials/      # Paredes, techo, lámparas, metal, latón, cubos, ranuras y cristal
-├── Prefabs/        # Player, Balanza, Pesas, CuboNumerado, CodeLock, Puerta, Vitrina, Nota, LuzTecho, Canvas/Menú
-├── Scenes/         # MainMenu, Laboratorio, Final
+├── Art/
+│   └── Models/       # Pesas (modelo propio) y Laboratory (modelos externos)
+├── Audio/            # Music/ y SFX/ (Player, Objects, Puzzles, UI)
+├── Inputs/           # Mapa de acciones del Input System (PlayerControls)
+├── Materials/        # Paredes, techo, lámparas, metal, latón, cubos, ranuras, papel y cristal
+├── Prefabs/          # Player, Balanza, Pesas, CuboNumerado, CodeLock, Puerta, Vitrina, Nota, LuzTecho, Canvas/Menú
+├── Scenes/           # MainMenu, Laboratorio, Final
 ├── Scripts/
-│   ├── Player/       # FirstPersonController, Footsteps
+│   ├── Player/       # FirstPersonController, Footsteps, PlayerPush
 │   ├── Interaction/  # Grabbable, ObjectGrabber, ImpactSound
-│   ├── Puzzles/      # ScaleBalance, ScalePlate, NumberCube, CubeSlot, CodeLock, Door
-│   └── UI/           # Crosshair, InteractionPrompt, SceneLoader, PauseMenu, MenuSounds, ButtonHoverSound
-├── Settings/       # Configuración de URP, post-procesado y Build Profile de Windows
-└── TextMesh Pro/   # Recursos de TextMesh Pro (números de los cubos)
+│   ├── Puzzles/      # ScaleBalance, ScalePlate, NumberCube, CubeSlot, CodeLock, Door, LightBulb, AimAt
+│   └── UI/           # Crosshair, InteractionPrompt, SceneLoader, PauseMenu, MenuSounds, ButtonHoverSound, VolumeSlider
+├── Settings/         # Configuración de URP, post-procesado y Build Profile de Windows
+└── TextMesh Pro/     # Recursos de TextMesh Pro
 ```
 
 Todo el código está en el namespace `EscapeRoomLab` y comentado en español.
@@ -186,6 +188,10 @@ Todo el código está en el namespace `EscapeRoomLab` y comentado en español.
 | `Footsteps` | Sonido de pasos cada cierta distancia recorrida por el suelo, con clips al azar sin repetir y variación de tono. |
 | `ImpactSound` | Sonido de golpe al chocar un objeto, con volumen según la fuerza del choque y un tiempo mínimo entre golpes. |
 | `MenuSounds` + `ButtonHoverSound` | Sonido de hover y de clic en todos los botones de un Canvas, sin configurarlos uno a uno. |
+| `PlayerPush` | Permite empujar objetos con Rigidbody al caminar contra ellos (por ejemplo, la silla). |
+| `LightBulb` | Bombilla visible que copia el color y el estado de una luz: la de la cerradura parpadea en rojo al fallar y se pone verde al acertar. |
+| `AimAt` | Orienta un objeto hacia un objetivo; el foco de la lámpara de escritorio apunta así a la nota. |
+| `VolumeSlider` | Volumen general guardado en `PlayerPrefs`, combinado con el volumen de los fundidos. El script está listo, pero no se llegó a añadir el control a la interfaz. |
 
 ### Decisiones técnicas
 
@@ -194,7 +200,6 @@ Todo el código está en el namespace `EscapeRoomLab` y comentado en español.
 - **Balanza por código, sin *joints*.** El peso se lee de los Rigidbody reales, pero la inclinación del brazo se calcula por código. Es más estable y fácil de ajustar que simularla con articulaciones físicas.
 - **Controles enseñados en contexto.** En lugar de una pantalla de instrucciones, un texto en la parte inferior muestra solo el control útil en cada momento. Así el jugador aprende a coger y girar objetos justo cuando lo necesita.
 - **Pausa con `timeScale` y scripts desactivados.** `Time.timeScale = 0` congela la física y las animaciones, pero el ratón no depende del tiempo, así que además se desactivan los scripts del jugador. Los fundidos usan tiempo sin escalar para funcionar con el juego en pausa.
-
 - **Estilo visual limpio.** Colores planos con una paleta reducida (paredes verde quirófano, metal oscuro, latón) y un color de acento naranja en los objetos con los que se interactúa, para que el jugador los distinga a simple vista. La atmósfera la dan la iluminación y el post-procesado más que las texturas, lo que encaja con modelos sencillos y con el tiempo disponible.
 - **Configuración desde el Inspector.** Velocidades, ángulos, tolerancias y colores son campos `[SerializeField]` con `Tooltip`, para ajustar el juego sin recompilar.
 - **URP**, para trabajar la iluminación y el post-procesado con buen rendimiento.
@@ -262,8 +267,10 @@ Recortes decididos para llegar: empezar con **una sola balanza** (el script perm
 6. **Vitrina y nota:** vitrina de cristal que se abre al equilibrar la balanza, reutilizando el script `Door` de la puerta (sin código nuevo), y nota con el código que se coge y se rota para leerla. Con esto el juego ya se puede completar de principio a fin en gris.
 7. **Menús y build:** menú de inicio con la historia, pantalla final, menú de pausa y fundidos entre escenas, con un único script (`SceneLoader`) reutilizado en todas las escenas. Se generó la primera build para Windows para detectar pronto los problemas que solo aparecen fuera del editor.
 8. **Ayuda de controles:** coger con `E` y girar con clic derecho resultaba poco intuitivo, así que se añadió un texto contextual en la parte inferior de la pantalla que indica qué hacer en cada momento.
+9. **Sonido:** música de fondo, pasos, coger y soltar, golpes de los objetos, vitrina, puerta, cerradura y botones. La mayoría se conectó desde los eventos de los puzles sin código nuevo; solo hicieron falta scripts para los pasos, los golpes y los botones. La balanza pasó a funcionar como un interruptor: la vitrina se abre al equilibrarla y se cierra al desequilibrarla.
 10. **Arte y ambientación:** pesas modeladas en Blender como pieza de arte propia; materiales con una paleta reducida y un color de acento para los objetos interactivos; lámparas de techo con sombras, luz ambiente oscura y post-procesado. Se decidió un estilo limpio en lugar de realista para que encajara con los modelos sencillos y con el tiempo disponible.
 11. **Pulido de interacción:** el objeto agarrado se acercó (costaba colocarlo en la balanza) y se puede acercar o alejar con la rueda; las ranuras de la cerradura solo aparecen como guía al llevar un cubo y muestran un destello al anclarlo.
+12. **Laboratorio y entrega:** modelos externos de Poly Pizza (mesas, estantería, lámpara, ordenador, silla), bombilla y lector en la cerradura, foco que ilumina la nota, menús con los colores del laboratorio y, tras probar la build con altavoces, subida del volumen de la música y las puertas.
 
 ### Problemas encontrados
 
@@ -284,6 +291,9 @@ Recortes decididos para llegar: empezar con **una sola balanza** (el script perm
 - **Sonido de la vitrina mudo.** El evento estaba bien conectado, pero el *Pitch* del Audio Source estaba en -1.43 (cambiado sin querer en el Inspector). Con pitch negativo el clip se reproduce al revés y termina al instante. Se puso a un valor positivo.
 - **Hover de los botones que sonaba dos veces.** Unity vuelve a avisar al botón de que el ratón "entra" cuando pasa del fondo al texto hijo. Se ignoran esas reentradas (`eventData.reentered`) y se añadió un tiempo mínimo entre dos sonidos de hover.
 - **Balanza que se quedaba bloqueada.** Al resolverse, la balanza se quedaba nivelada aunque se quitaran las pesas, lo que resultaba extraño. Se cambió a un funcionamiento de interruptor, con un margen de 0,5 s para que una pesa que rebota no abra y cierre la vitrina en bucle.
+- **Modelos externos gigantes.** El ordenador y el monitor venían en unidades enormes (más de 600 m de ancho). Se corrigió el *Scale Factor* en la importación de cada modelo, para que entren a tamaño real en cualquier copia.
+- **Mesa torcida y modelos sin colisión.** Un `.obj` de mesa venía inclinado de origen, y la rotación de la escena lo compensaba. Los modelos importados no tenían colisión: se activó *Generate Colliders* en su importación, salvo en la silla, que al moverse con física necesita un *Mesh Collider* convexo.
+- **Volumen demasiado bajo en la build.** Probando la build con altavoces, la música y los chirridos de las puertas apenas se oían. Se subió el volumen de la música y se amplió la distancia a la que los sonidos 3D de las puertas se oyen sin atenuarse.
 
 ## Registro de tiempo
 
@@ -365,6 +375,8 @@ El reparto de trabajo fue siempre el mismo: yo decidía qué quería conseguir y
 - **Materiales e iluminación.** Creó los materiales del laboratorio y el prefab de lámpara de techo (luz fría con sombras suaves y panel emisivo), y asignó los materiales de la balanza, la cerradura y los cubos editando directamente los prefabs.
 - **Modelo de las pesas.** Me guió para exportar el modelo de Blender a Unity, ajustar el *Mesh Collider* convexo y sustituir el cubo del prefab sin perder los tamaños ni las masas de las pesas ya colocadas.
 - **Ranuras de la cerradura.** A partir de lo que le pedí, programó que las ranuras solo se vean como guía mientras se lleva un cubo y un destello al anclarlo, evitando que las caras de la ranura y el cubo parpadeen al solaparse.
+- **Modelos externos.** Me recomendó páginas de modelos *low-poly* gratuitos (Poly Pizza, Kenney, Quaternius) y revisó los que descargué: detectó una estantería de 63.000 caras y 16 MB que cambié por otra más ligera, corrigió la escala de los modelos gigantes desde la importación y activó la generación de colisiones.
+- **Detalles de la cerradura y la nota.** Añadió una bombilla que cambia de color con la luz de la cerradura, un lector emisivo bajo las ranuras, un foco que apunta siempre a la nota y rediseñó la nota (papel, tinta y la firma del Dr. Vidal).
 
 **Git**
 - **Commits.** Propuso cómo dividir el trabajo en commits pequeños, uno por funcionalidad, y sus mensajes. Me explicó cómo separar el título del detalle con varios `-m`. Antes de cada commit revisaba que no se colaran cambios de otra funcionalidad y que los `.meta` fueran incluidos. Los commits hechos con su ayuda llevan la línea `Co-Authored-By: Claude`.
@@ -380,15 +392,17 @@ El reparto de trabajo fue siempre el mismo: yo decidía qué quería conseguir y
 - **Panel de pausa invisible.** Su primera sugerencia (corregir la escala del panel) no bastó: el panel seguía sin verse. Al contarle que el fundido también salía como un cuadrado pequeño, volvió a leer la escena y encontró la causa real, los márgenes negativos de ambos objetos.
 - **Música generada con IA.** Intenté generar la música de fondo con IA, con el *prompt* `dark ambient, mysterious abandoned laboratory, subtle electronic hum, slow tension, loopable, instrumental`. La pista resultante era aprovechable pero tenía un momento con el volumen muy alto, y para seguir generando y descargar hacía falta pagar. Lo resolví buscando una pista con licencia libre en Pixabay y recortándola con Audacity.
 - **Pasos que no sonaban.** El script de pasos obligaba a tener un `CharacterController` en el mismo objeto; al ponerlo en un hijo del jugador, Unity añadió uno nuevo que nunca se movía. Al revisar el prefab encontró el problema y cambió el script.
+- **Mesa torcida por un mal consejo.** Al ver que la mesa tenía una rotación rara, me recomendó ponerla a 0; pero esa rotación compensaba que el modelo venía inclinado de origen, y la mesa se torció. Al contárselo, entendió el motivo y restauró la rotación original.
+- **Materiales demasiado oscuros.** Los materiales metálicos (soporte de la cerradura, latón) se veían casi negros aunque su color fuera claro. Tras pedirle varias veces que los aclarara, encontró la causa: con la luz ambiente oscura, un material muy metálico refleja oscuridad. Bajó el metalizado y se vieron con su color.
 - **Código sin probar.** La IA no puede ejecutar Unity, así que nunca probó sus scripts: cada cambio lo probé yo en el editor. Los fallos de arriba solo aparecieron al jugar.
 
 ## Posibles mejoras
-
 
 - **Sensibilidad para mando.** La vista está ajustada para el ratón; con el stick derecho gira muy despacio. Haría falta una sensibilidad separada para el mando.
 - **Partículas.** Partículas al abrir la vitrina, al anclar los cubos y al abrir la puerta de salida.
 - **Más ambientación.** Muebles, objetos de laboratorio y una nota mejor escondida para alargar la exploración.
 - **Ajuste de las lámparas.** Las luces del techo siguen siendo algo brillantes.
+- **Opciones de volumen.** El control de volumen general (`VolumeSlider`) está programado, pero falta añadirlo al menú de pausa o a un menú de opciones.
 
 ---
 
