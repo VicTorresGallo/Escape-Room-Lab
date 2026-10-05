@@ -235,7 +235,7 @@ Otros retoques propios: la música de fondo recortada con Audacity y todos los m
 - **CC0 (Kenney):** dominio público. Se puede usar sin atribución; aun así se citan aquí.
 - **Pixabay Content License:** uso gratuito, también en juegos, sin atribución obligatoria. Se cita a los autores igualmente, con los enlaces que facilita Pixabay. No permite redistribuir los archivos sueltos como si fueran propios, cosa que no se hace: solo se usan dentro del juego.
 - **Ningún asset de audio exige atribución obligatoria.** Los créditos se incluyen por transparencia, tal como pide el enunciado.
-- **Modelos 3D:** los de Quaternius son CC0; el resto son **CC-BY (Creative Commons Attribution)**, que **obliga a citar al autor**, como se hace en esta tabla. <!-- TODO: confirmar la licencia de cada modelo en su página de Poly Pizza -->
+- **Modelos 3D:** los de Quaternius son CC0; el resto son **CC-BY (Creative Commons Attribution)**, que **obliga a citar al autor**, como se hace en esta tabla.
 
 ## Proceso de desarrollo
 
@@ -287,20 +287,33 @@ Recortes decididos para llegar: empezar con **una sola balanza** (el script perm
 
 ## Registro de tiempo
 
-El tiempo se mide con [Clockify](https://clockify.me).
+El tiempo se ha medido con [Clockify](https://clockify.me). Cada fila es una sesión de trabajo.
 
-| Día | Horas | Tareas |
-|---|---|---|
-| 03/10/2026 | 2 h | Gestión y puesta en marcha del proyecto: creación con la plantilla 3D (URP), `.gitignore`, repositorio, diseño de los puzles y README |
-| 03/10/2026 | 1 h | Personaje en primera persona: movimiento, vista, coger y rotar objetos |
-| 03/10/2026 | 1 h 30 min | Balanza y pesas |
-| 03/10/2026 | 1 h 15 min | Cubos numerados, ranuras, cerradura de código y puerta |
-| 03/10/2026 | 1 h | Vitrina que abre la balanza y nota con el código |
-| 04/10/2026 | 1 h 15 min | Escenas y menús: menú de inicio, pantalla final, menú de pausa y fundidos |
-| 04/10/2026 | 20 min | Primera build para Windows |
-| 04/10/2026 | 30 min | Ayuda contextual de controles |
-| 05/10/2026 | <!-- TODO --> | Modelo de las pesas en Blender, rueda para acercar objetos, materiales, iluminación, post-procesado y ranuras de la cerradura |
-| **Total** | <!-- TODO: 12 h 5 min + lunes --> | |
+| Día | Horario | Duración | Tarea |
+|---|---|---|---|
+| 03/10/2026 | 10:30 – 12:30 | 2 h | Gestión y puesta en marcha del proyecto: creación con la plantilla 3D (URP), `.gitignore`, repositorio, diseño de los puzles y README |
+| 03/10/2026 | 15:39 – 16:39 | 1 h | Personaje en primera persona: movimiento, vista, coger y rotar objetos |
+| 03/10/2026 | 16:35 – 18:05 | 1 h 30 min | Balanza y pesas |
+| 03/10/2026 | 18:28 – 19:43 | 1 h 15 min | Cubos numerados, ranuras, cerradura de código y puerta |
+| 03/10/2026 | 23:15 – 00:15 | 1 h | Vitrina que abre la balanza y nota con el código |
+| 04/10/2026 | 10:20 – 11:05 | 45 min | Escenas y menús: menú de inicio y pantalla final |
+| 04/10/2026 | 12:10 – 12:40 | 30 min | Primera build para Windows |
+| 04/10/2026 | 12:45 – 13:15 | 30 min | Escenas y menús: menú de pausa y fundidos |
+| 04/10/2026 | 13:10 – 13:40 | 30 min | Ayuda contextual de controles |
+| 04/10/2026 | 13:43 – 14:13 | 30 min | Sonido: búsqueda e implementación |
+| 04/10/2026 | 15:00 – 16:15 | 1 h 15 min | Sonido: búsqueda e implementación |
+| 04/10/2026 | 17:07 – 18:37 | 1 h 30 min | Sonido: búsqueda e implementación, recorte de la música, balanza como interruptor |
+| 04/10/2026 | 23:40 – 00:10 | 30 min | Parte visual: modelo de las pesas en Blender |
+| 05/10/2026 | 09:25 – 12:25 | 3 h | Parte visual: materiales, iluminación, post-procesado, modelos del laboratorio, puerta, cerradura, balanza, nota y menús |
+
+**Total por día**
+
+| Día | Horas |
+|---|---|
+| Sábado 03/10/2026 | 6 h 45 min |
+| Domingo 04/10/2026 | 6 h |
+| Lunes 05/10/2026 | 3 h |
+| **Total** | **15 h 45 min** |
 
 ## Uso de la IA
 
