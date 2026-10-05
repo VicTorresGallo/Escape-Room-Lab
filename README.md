@@ -56,6 +56,7 @@ La historia se presenta en el menú de inicio y se cierra en la pantalla final: 
 | Mirar | Ratón |
 | Coger / soltar objeto | `E` |
 | Rotar el objeto que se sostiene | Mantener clic derecho y mover el ratón |
+| Acercar / alejar el objeto que se sostiene | Rueda del ratón |
 | Pausa / continuar | `Esc` |
 
 ## Cómo ejecutar el proyecto
@@ -102,7 +103,10 @@ Para generar la build: **File → Build Profiles**, perfil **Windows** → **Bui
 | Sonido: pasos, coger y soltar, golpes de objetos, vitrina, puerta, código correcto e incorrecto, botones | ✅ Hecho |
 | Música de fondo en el laboratorio y en los menús | ✅ Hecho |
 | Balanza como interruptor: la vitrina se abre al equilibrarla y se cierra al desequilibrarla | ✅ Hecho |
-| Laboratorio ambientado (arte) | ⬜ Pendiente |
+| Laboratorio ambientado: materiales, iluminación y post-procesado | ✅ Hecho |
+| Pesas con modelo propio hecho en Blender | ✅ Hecho |
+| Ranuras de la cerradura como guía al llevar un cubo, con destello al anclarlo | ✅ Hecho |
+| Acercar y alejar el objeto agarrado con la rueda | ✅ Hecho |
 
 ### Diseño
 
@@ -126,8 +130,8 @@ Para generar la build: **File → Build Profiles**, perfil **Windows** → **Bui
 | Menú de inicio | ✅ | Escena `MainMenu`: título, historia, botones Jugar y Salir |
 | Pantalla final al escapar | ✅ | Escena `Final`: se carga con un fundido al terminar de abrirse la puerta |
 | Sonido (efectos y/o música) | ✅ | Música de fondo, pasos, coger y soltar, golpes según la fuerza del choque, vitrina, puerta, código correcto e incorrecto y botones de los menús |
-| Feedback de las acciones del jugador | 🟨 | Hecho: punto de mira, ayuda contextual de controles, brazo de la balanza que se inclina, cubos que encajan con una transición, luz roja que parpadea al fallar, puerta que se abre, sonidos de cada acción y golpes cuyo volumen depende de la fuerza del choque. Falta: partículas |
-| Al menos una pieza de arte propia o retocada | ⬜ | Ver [Arte propio](#arte-propio) |
+destello al anclar un cubo, ayuda contextual de controles, brazo de la balanza que se inclina, cubos que encajan con una transición, luz roja que parpadea al fallar, puerta que se abre, sonidos de cada acción y golpes cuyo volumen depende de la fuerza del choque. Falta: partículas |
+| Al menos una pieza de arte propia o retocada | ✅ | Pesas modeladas en Blender. Ver [Arte propio](#arte-propio) |
 | Build para Windows en `.zip` | 🟨 | Primera build generada y probada; falta la definitiva y el `.zip` |
 
 **Extras opcionales**
@@ -137,7 +141,7 @@ Para generar la build: **File → Build Profiles**, perfil **Windows** → **Bui
 | Animaciones (Animator) | ⬜ | |
 | Secuencias (Timeline / Playable Director) | ⬜ | |
 | Partículas (Particle System / VFX Graph) | ⬜ | |
-| Iluminación trabajada y post-procesado | ⬜ | |
+| Iluminación trabajada y post-procesado | ✅ | Luz ambiente oscura, lámparas de techo con sombras suaves y panel emisivo, y Global Volume con Bloom, Vignette y Tonemapping |
 | Shaders o materiales propios (Shader Graph) | ⬜ | |
 | Elemento narrativo / pantalla final cuidada | 🟨 | Historia del Dr. Vidal en el menú y en la pantalla final |
 
@@ -146,10 +150,10 @@ Para generar la build: **File → Build Profiles**, perfil **Windows** → **Bui
 ```
 Assets/
 ├── Audio/          # Music/ y SFX/ (Player, Objects, Puzzles, UI)
-├── Canvas/         # Prefab Menú: Canvas de las pantallas de menú
 ├── Inputs/         # Mapa de acciones del Input System (PlayerControls)
-├── Materials/      # Cristal
-├── Prefabs/        # Player, Balanza, Pesas, CuboNumerado, CodeLock, Puerta, Vitrina, Nota
+├── Art/           # Models/Pesas (modelo propio de Blender)
+├── Materials/      # Paredes, techo, lámparas, metal, latón, cubos, ranuras y cristal
+├── Prefabs/        # Player, Balanza, Pesas, CuboNumerado, CodeLock, Puerta, Vitrina, Nota, LuzTecho, Canvas/Menú
 ├── Scenes/         # MainMenu, Laboratorio, Final
 ├── Scripts/
 │   ├── Player/       # FirstPersonController, Footsteps
@@ -190,7 +194,8 @@ Todo el código está en el namespace `EscapeRoomLab` y comentado en español.
 - **Balanza por código, sin *joints*.** El peso se lee de los Rigidbody reales, pero la inclinación del brazo se calcula por código. Es más estable y fácil de ajustar que simularla con articulaciones físicas.
 - **Controles enseñados en contexto.** En lugar de una pantalla de instrucciones, un texto en la parte inferior muestra solo el control útil en cada momento. Así el jugador aprende a coger y girar objetos justo cuando lo necesita.
 - **Pausa con `timeScale` y scripts desactivados.** `Time.timeScale = 0` congela la física y las animaciones, pero el ratón no depende del tiempo, así que además se desactivan los scripts del jugador. Los fundidos usan tiempo sin escalar para funcionar con el juego en pausa.
-- **Sonido desde los eventos.** Casi todos los sonidos de los puzles se conectan en el Inspector con `AudioSource.PlayOneShot` en los eventos que ya existían (`onOpening`, `onUnlocked`, `onWrongCode`...), sin código nuevo. El volumen general baja y sube con los fundidos para que la música no se corte de golpe al cambiar de escena.
+
+- **Estilo visual limpio.** Colores planos con una paleta reducida (paredes verde quirófano, metal oscuro, latón) y un color de acento naranja en los objetos con los que se interactúa, para que el jugador los distinga a simple vista. La atmósfera la dan la iluminación y el post-procesado más que las texturas, lo que encaja con modelos sencillos y con el tiempo disponible.
 - **Configuración desde el Inspector.** Velocidades, ángulos, tolerancias y colores son campos `[SerializeField]` con `Tooltip`, para ajustar el juego sin recompilar.
 - **URP**, para trabajar la iluminación y el post-procesado con buen rendimiento.
 - **Input System** con `InputActionReference`: las acciones se asignan en el Inspector y los scripts no dependen del nombre del asset de input.
@@ -199,7 +204,11 @@ Todo el código está en el namespace `EscapeRoomLab` y comentado en español.
 
 ### Arte propio
 
-<!-- TODO: indicar qué pieza(s) se han hecho o retocado y con qué herramienta (Blender, Photoshop, Shader Graph...). Incluir captura si es posible. -->
+**Pesas modeladas en Blender.** Las pesas del puzle de la balanza son un modelo propio <!-- TODO: describir brevemente la forma y cómo se modeló -->, exportado en FBX a `Assets/Art/Models/Pesas/`. En Unity usa un material metálico y un *Mesh Collider* convexo; los distintos pesos son el mismo modelo a distintos tamaños, para que el jugador deduzca la masa por el tamaño.
+
+<!-- TODO: añadir captura en Docs/ y el .blend en ArtSource/ -->
+
+Otros retoques propios: la música de fondo recortada con Audacity y todos los materiales del laboratorio, hechos en Unity.
 
 ### Assets externos
 
@@ -212,7 +221,6 @@ Todo el código está en el namespace `EscapeRoomLab` y comentado en español.
 | [Squeaky door](https://pixabay.com/sound-effects/?utm_content=43353) | [freesound_community](https://pixabay.com/es/users/freesound_community-46691455/) en Pixabay | Pixabay Content License | Puertas |
 | Skrzypienie (crujido) | [u_kt8eskwh7o](https://pixabay.com/es/users/u_kt8eskwh7o-44221995/) en Pixabay | Pixabay Content License | Puertas |
 | Hidden Crime | [Universfield](https://pixabay.com/es/users/universfield-28281460/) en Pixabay | Pixabay Content License | Música de fondo del laboratorio y de los menús, **recortada por mí** |
-| <!-- TODO: modelos y texturas del laboratorio --> | | | |
 
 **Sobre las licencias:**
 - **CC0 (Kenney):** dominio público. Se puede usar sin atribución; aun así se citan aquí.
@@ -244,7 +252,8 @@ Recortes decididos para llegar: empezar con **una sola balanza** (el script perm
 6. **Vitrina y nota:** vitrina de cristal que se abre al equilibrar la balanza, reutilizando el script `Door` de la puerta (sin código nuevo), y nota con el código que se coge y se rota para leerla. Con esto el juego ya se puede completar de principio a fin en gris.
 7. **Menús y build:** menú de inicio con la historia, pantalla final, menú de pausa y fundidos entre escenas, con un único script (`SceneLoader`) reutilizado en todas las escenas. Se generó la primera build para Windows para detectar pronto los problemas que solo aparecen fuera del editor.
 8. **Ayuda de controles:** coger con `E` y girar con clic derecho resultaba poco intuitivo, así que se añadió un texto contextual en la parte inferior de la pantalla que indica qué hacer en cada momento.
-9. **Sonido:** música de fondo, pasos, coger y soltar, golpes de los objetos, vitrina, puerta, cerradura y botones. La mayoría se conectó desde los eventos de los puzles sin código nuevo; solo hicieron falta scripts para los pasos, los golpes y los botones. La balanza pasó a funcionar como un interruptor: la vitrina se abre al equilibrarla y se cierra al desequilibrarla.
+10. **Arte y ambientación:** pesas modeladas en Blender como pieza de arte propia; materiales con una paleta reducida y un color de acento para los objetos interactivos; lámparas de techo con sombras, luz ambiente oscura y post-procesado. Se decidió un estilo limpio en lugar de realista para que encajara con los modelos sencillos y con el tiempo disponible.
+11. **Pulido de interacción:** el objeto agarrado se acercó (costaba colocarlo en la balanza) y se puede acercar o alejar con la rueda; las ranuras de la cerradura solo aparecen como guía al llevar un cubo y muestran un destello al anclarlo.
 
 ### Problemas encontrados
 
@@ -260,7 +269,8 @@ Recortes decididos para llegar: empezar con **una sola balanza** (el script perm
 - **"No cameras rendering" en los menús.** Al borrar la cámara de las escenas de menú, la interfaz se seguía viendo (Canvas en modo *Overlay*), pero Unity avisaba de que ninguna cámara dibujaba la escena. Se añadió una cámara con fondo negro y sin Audio Listener.
 - **Escenas fuera de la build.** Las escenas nuevas no estaban en la lista de la build, así que el juego habría arrancado en el laboratorio y no habría encontrado la pantalla final. Se añadieron en el orden `MainMenu`, `Laboratorio`, `Final`.
 - **Fundido y panel de pausa diminutos.** La pausa funcionaba pero no se veía el panel, y el fundido era un cuadrado pequeño en el centro. Ambos tenían los anchors estirados a toda la pantalla pero con márgenes negativos que les restaban casi todo el tamaño. Se pusieron los márgenes (Left, Top, Right y Bottom) a 0.
-- **Pasos que no sonaban.** El script de pasos exigía un `CharacterController` en el mismo objeto y se había puesto en un hijo del jugador, así que Unity le añadió uno nuevo que nunca se movía. Se cambió el script para que use el del jugador (buscándolo hacia arriba en la jerarquía) y se quitó el sobrante.
+- **Lámparas demasiado brillantes.** El primer prefab de lámpara tenía el panel emisivo y la luz demasiado intensos y pegados al techo, y se veía una mancha quemada. Bajó la emisión y separó la luz del techo, aunque el resultado sigue siendo algo brillante.
+- **Ranuras que se solapaban con los cubos.** La primera versión de las ranuras visibles hacía parpadear las caras al anclar un cubo, porque ranura y cubo miden lo mismo. Tras varias iteraciones se dejó la ranura solo como guía y como destello, algo más grande que el cubo.
 - **Sonido de la vitrina mudo.** El evento estaba bien conectado, pero el *Pitch* del Audio Source estaba en -1.43 (cambiado sin querer en el Inspector). Con pitch negativo el clip se reproduce al revés y termina al instante. Se puso a un valor positivo.
 - **Hover de los botones que sonaba dos veces.** Unity vuelve a avisar al botón de que el ratón "entra" cuando pasa del fondo al texto hijo. Se ignoran esas reentradas (`eventData.reentered`) y se añadió un tiempo mínimo entre dos sonidos de hover.
 - **Balanza que se quedaba bloqueada.** Al resolverse, la balanza se quedaba nivelada aunque se quitaran las pesas, lo que resultaba extraño. Se cambió a un funcionamiento de interruptor, con un margen de 0,5 s para que una pesa que rebota no abra y cierre la vitrina en bucle.
@@ -279,8 +289,8 @@ El tiempo se mide con [Clockify](https://clockify.me).
 | 04/10/2026 | 1 h 15 min | Escenas y menús: menú de inicio, pantalla final, menú de pausa y fundidos |
 | 04/10/2026 | 20 min | Primera build para Windows |
 | 04/10/2026 | 30 min | Ayuda contextual de controles |
-| 04/10/2026 | 3 h 15 min | Sonido: búsqueda de sonidos y música, recorte de la pista, scripts de pasos, golpes y botones, balanza como interruptor |
-| **Total** | **12 h 5 min** | |
+| 05/10/2026 | <!-- TODO --> | Modelo de las pesas en Blender, rueda para acercar objetos, materiales, iluminación, post-procesado y ranuras de la cerradura |
+| **Total** | <!-- TODO: 12 h 5 min + lunes --> | |
 
 ## Uso de la IA
 
@@ -289,7 +299,7 @@ El tiempo se mide con [Clockify](https://clockify.me).
 | Herramienta | Para qué |
 |---|---|
 | Claude Code (Claude Opus 5.5), desde la extensión de VS Code | Planificación, código C#, diagnóstico de errores, git y documentación |
-| Herramienta de IA para generar música | Intento de generar la música de fondo (descartado, ver abajo) |
+| Unity AI Assistant (paquete `com.unity.ai.assistant`) | <!-- TODO: indicar para qué se usó, o quitar la fila si no se llegó a usar --> |
 
 ### Cómo trabajé con la IA
 
@@ -327,12 +337,16 @@ El reparto de trabajo fue siempre el mismo: yo decidía qué quería conseguir y
 - **Dónde buscar sonido y música.** Me recomendó páginas con licencias claras (Kenney, Pixabay, Freesound, Incompetech) y herramientas de IA para generar música. Me explicó qué significa el aviso de *Content ID* de YouTube en una pista de Pixabay y por qué no afecta al juego.
 - **Scripts de sonido.** Escribió `Footsteps` (pasos según la distancia recorrida), `ImpactSound` (golpes con volumen según la fuerza del choque) y `MenuSounds` (sonido en todos los botones de un Canvas a la vez). Para el resto me explicó cómo conectar `AudioSource.PlayOneShot` desde los eventos que ya existían, sin código.
 - **Fundido de audio.** Propuso bajar el volumen general junto con el fundido a negro, para que la música no se corte de golpe al cambiar de escena.
-- **Revisión final del sonido.** Al terminar, revisó todas las escenas y prefabs y me avisó de lo que faltaba: la música del menú sin clip asignado, las ranuras sin sonido al encajar un cubo y la música del laboratorio con un volumen casi inaudible.
+
+**Arte y ambientación**
+- **Dirección visual.** Le pregunté si usar texturas realistas o no. Recomendó un estilo limpio con colores planos y un color de acento, porque mezclar texturas realistas con modelos sencillos se nota y porque la atmósfera se consigue antes con la luz. Me explicó por qué al quitar la luz direccional no cambiaba nada: casi toda la luz venía del ambiente del cielo.
+- **Materiales e iluminación.** Creó los materiales del laboratorio y el prefab de lámpara de techo (luz fría con sombras suaves y panel emisivo), y asignó los materiales de la balanza, la cerradura y los cubos editando directamente los prefabs.
+- **Modelo de las pesas.** Me guió para exportar el modelo de Blender a Unity, ajustar el *Mesh Collider* convexo y sustituir el cubo del prefab sin perder los tamaños ni las masas de las pesas ya colocadas.
+- **Ranuras de la cerradura.** A partir de lo que le pedí, programó que las ranuras solo se vean como guía mientras se lleva un cubo y un destello al anclarlo, evitando que las caras de la ranura y el cubo parpadeen al solaparse.
 
 **Git**
 - **Commits.** Propuso cómo dividir el trabajo en commits pequeños, uno por funcionalidad, y sus mensajes. Me explicó cómo separar el título del detalle con varios `-m`. Antes de cada commit revisaba que no se colaran cambios de otra funcionalidad y que los `.meta` fueran incluidos. Los commits hechos con su ayuda llevan la línea `Co-Authored-By: Claude`.
 - **Renombrar la escena.** Me recomendó renombrarla desde Unity y no desde el explorador de archivos, para conservar su identificador interno (GUID) y no romper las referencias.
-<!-- TODO: más ejemplos a lo largo del desarrollo -->
 
 ### Cuándo la IA no dio lo que necesitaba
 
@@ -345,14 +359,14 @@ El reparto de trabajo fue siempre el mismo: yo decidía qué quería conseguir y
 - **Música generada con IA.** Intenté generar la música de fondo con IA, con el *prompt* `dark ambient, mysterious abandoned laboratory, subtle electronic hum, slow tension, loopable, instrumental`. La pista resultante era aprovechable pero tenía un momento con el volumen muy alto, y para seguir generando y descargar hacía falta pagar. Lo resolví buscando una pista con licencia libre en Pixabay y recortándola con Audacity.
 - **Pasos que no sonaban.** El script de pasos obligaba a tener un `CharacterController` en el mismo objeto; al ponerlo en un hijo del jugador, Unity añadió uno nuevo que nunca se movía. Al revisar el prefab encontró el problema y cambió el script.
 - **Código sin probar.** La IA no puede ejecutar Unity, así que nunca probó sus scripts: cada cambio lo probé yo en el editor. Los fallos de arriba solo aparecieron al jugar.
-<!-- TODO: más casos -->
 
 ## Posibles mejoras
 
-<!-- TODO: completar al final -->
 
 - **Sensibilidad para mando.** La vista está ajustada para el ratón; con el stick derecho gira muy despacio. Haría falta una sensibilidad separada para el mando.
-- **Más balanzas.** Una balanza por cubo, cada una con su color, para ligar visualmente cada balanza con el cubo que libera.
+- **Partículas.** Partículas al abrir la vitrina, al anclar los cubos y al abrir la puerta de salida.
+- **Más ambientación.** Muebles, objetos de laboratorio y una nota mejor escondida para alargar la exploración.
+- **Ajuste de las lámparas.** Las luces del techo siguen siendo algo brillantes.
 
 ---
 
