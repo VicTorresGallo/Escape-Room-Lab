@@ -322,7 +322,6 @@ El tiempo se ha medido con [Clockify](https://clockify.me). Cada fila es una ses
 | Herramienta | Para qué |
 |---|---|
 | Claude Code (Claude Opus 5.5), desde la extensión de VS Code | Planificación, código C#, diagnóstico de errores, git y documentación |
-| Unity AI Assistant (paquete `com.unity.ai.assistant`) | <!-- TODO: indicar para qué se usó, o quitar la fila si no se llegó a usar --> |
 
 ### Cómo trabajé con la IA
 
