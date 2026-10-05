@@ -7,7 +7,7 @@ namespace EscapeRoomLab
     /// Texto de ayuda contextual bajo el punto de mira. Muestra solo los controles que
     /// tienen sentido en cada momento, para que el jugador los aprenda al usarlos:
     /// - Apuntando a un objeto agarrable: "[E] Coger".
-    /// - Con un objeto en la mano: "[E] Soltar   [Clic dcho.] Girar".
+    /// - Con un objeto en la mano: "[E] Soltar   [Clic dcho.] Girar   [Rueda] Acercar / alejar".
     /// - Girando el objeto: "Mueve el ratón para girarlo".
     /// Sin nada que hacer, el texto se desvanece.
     /// </summary>
@@ -19,7 +19,7 @@ namespace EscapeRoomLab
 
         [Header("Textos")]
         [TextArea] [SerializeField] private string grabText = "<b>[E]</b> Coger";
-        [TextArea] [SerializeField] private string holdText = "<b>[E]</b> Soltar     <b>[Clic dcho.]</b> Girar";
+        [TextArea] [SerializeField] private string holdText = "<b>[E]</b> Soltar     <b>[Clic dcho.]</b> Girar     <b>[Rueda]</b> Acercar / alejar";
         [TextArea] [SerializeField] private string rotateText = "Mueve el ratón para girarlo";
 
         [Header("Fundido")]

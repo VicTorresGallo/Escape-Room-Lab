@@ -23,12 +23,19 @@ namespace EscapeRoomLab
         [SerializeField] private InputActionReference rotateAction;
         [Tooltip("Acción Player/Look: el movimiento del ratón rota el objeto.")]
         [SerializeField] private InputActionReference lookAction;
+        [Tooltip("Acción Player/HoldDistance: rueda del ratón para acercar y alejar el objeto agarrado. Opcional.")]
+        [SerializeField] private InputActionReference holdDistanceAction;
 
         [Header("Agarrar")]
         [Tooltip("Distancia máxima a la que se puede agarrar un objeto.")]
         [SerializeField] private float grabRange = 2.5f;
-        [Tooltip("Distancia delante de la cámara a la que se sostiene el objeto.")]
-        [SerializeField] private float holdDistance = 1.5f;
+        [Tooltip("Distancia delante de la cámara a la que se sostiene el objeto al cogerlo.")]
+        [SerializeField] private float holdDistance = 0.9f;
+        [Tooltip("Distancia mínima y máxima a la que se puede acercar o alejar el objeto con la rueda.")]
+        [SerializeField] private float minHoldDistance = 0.6f;
+        [SerializeField] private float maxHoldDistance = 1.6f;
+        [Tooltip("Metros que se acerca o aleja el objeto por cada paso de la rueda.")]
+        [SerializeField] private float holdDistanceStep = 0.1f;
         [Tooltip("Capas que puede alcanzar el rayo. Las paredes deben estar incluidas para no agarrar a través de ellas.")]
         [SerializeField] private LayerMask grabMask = ~0;
         [Tooltip("Margen de puntería, en metros. Si el rayo no da justo en un objeto, se busca con una esfera de este radio para que los objetos pequeños sean fáciles de coger.")]
@@ -54,12 +61,18 @@ namespace EscapeRoomLab
 
         private Grabbable heldObject;
 
+        // Distancia actual del objeto agarrado: empieza en holdDistance y la cambia la rueda.
+        private float currentHoldDistance;
+
         // Rotación del objeto relativa a la cámara: así gira con el jugador cuando este mira a otro lado.
         private Quaternion rotationRelativeToCamera;
 
         private Collider[] playerColliders;
 
         public bool IsHolding => heldObject != null;
+
+        /// <summary>Objeto que el jugador lleva en la mano (null si no lleva ninguno).</summary>
+        public Grabbable HeldObject => heldObject;
 
         /// <summary>True mientras se mantiene Rotate con un objeto en la mano. Lo usa InteractionPrompt.</summary>
         public bool IsRotating { get; private set; }
@@ -90,6 +103,10 @@ namespace EscapeRoomLab
             interactAction.action.Enable();
             rotateAction.action.Enable();
             lookAction.action.Enable();
+            if (holdDistanceAction != null)
+            {
+                holdDistanceAction.action.Enable();
+            }
         }
 
         private void OnDisable()
@@ -115,6 +132,32 @@ namespace EscapeRoomLab
             }
 
             HandleRotation();
+            HandleHoldDistance();
+        }
+
+        /// <summary>
+        /// Con un objeto en la mano, cada paso de la rueda (o pulsación de la cruceta) lo acerca o aleja.
+        /// Solo se usa el signo de la rueda (no su valor), porque la cantidad que devuelve por "clic"
+        /// cambia según el sistema operativo y el ratón. WasPerformedThisFrame hace que mantener
+        /// la cruceta pulsada cuente como un solo paso en lugar de uno por frame.
+        /// </summary>
+        private void HandleHoldDistance()
+        {
+            if (!IsHolding || holdDistanceAction == null || !holdDistanceAction.action.WasPerformedThisFrame())
+            {
+                return;
+            }
+
+            float scroll = holdDistanceAction.action.ReadValue<float>();
+            if (Mathf.Approximately(scroll, 0f))
+            {
+                return;
+            }
+
+            currentHoldDistance = Mathf.Clamp(
+                currentHoldDistance + Mathf.Sign(scroll) * holdDistanceStep,
+                minHoldDistance,
+                maxHoldDistance);
         }
 
         private void FixedUpdate()
@@ -177,6 +220,7 @@ namespace EscapeRoomLab
 
             heldObject = grabbable;
             heldObject.OnGrabbed();
+            currentHoldDistance = holdDistance;
             rotationRelativeToCamera = Quaternion.Inverse(cameraTransform.rotation) * heldObject.Body.rotation;
 
             // Evita que el objeto empuje al jugador o se meta en su cápsula.
@@ -243,7 +287,7 @@ namespace EscapeRoomLab
         private void MoveHeldObject()
         {
             Rigidbody body = heldObject.Body;
-            Vector3 holdPoint = cameraTransform.position + cameraTransform.forward * holdDistance;
+            Vector3 holdPoint = cameraTransform.position + cameraTransform.forward * currentHoldDistance;
             Vector3 toHoldPoint = holdPoint - body.position;
 
             // Si se ha quedado atrapado detrás de algo, se suelta para no arrastrarlo a través de la pared.
