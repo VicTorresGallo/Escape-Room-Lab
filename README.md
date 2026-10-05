@@ -221,11 +221,21 @@ Otros retoques propios: la música de fondo recortada con Audacity y todos los m
 | [Squeaky door](https://pixabay.com/sound-effects/?utm_content=43353) | [freesound_community](https://pixabay.com/es/users/freesound_community-46691455/) en Pixabay | Pixabay Content License | Puertas |
 | Skrzypienie (crujido) | [u_kt8eskwh7o](https://pixabay.com/es/users/u_kt8eskwh7o-44221995/) en Pixabay | Pixabay Content License | Puertas |
 | Hidden Crime | [Universfield](https://pixabay.com/es/users/universfield-28281460/) en Pixabay | Pixabay Content License | Música de fondo del laboratorio y de los menús, **recortada por mí** |
+| [Lab Table](https://poly.pizza/m/NyeiCAto3N) | Ali12 (Poly Pizza) | CC-BY | Mesa del laboratorio |
+| [Lab Desk](https://poly.pizza/m/6KxaD6I6I48) | Colonel Cthulu (Poly Pizza) | CC-BY | Mesa del laboratorio |
+| [Light Desk](https://poly.pizza/m/uJDWrSJGVH) | Quaternius (Poly Pizza) | CC0 | Lámpara de escritorio que ilumina la nota |
+| [Office Chair](https://poly.pizza/m/UfKvrZBK6C) | Quaternius (Poly Pizza) | CC0 | Silla (se puede empujar) |
+| [Shelves](https://poly.pizza/m/OD78iJOQoN) | J-Toastie (Poly Pizza) | CC-BY | Estantería |
+| [Computer](https://poly.pizza/m/2EHvZLax4Y3) | Poly by Google (Poly Pizza) | CC-BY | Decoración |
+| [Monitor](https://poly.pizza/m/e8cELDeDuTr) | Poly by Google (Poly Pizza) | CC-BY | Decoración |
+| [Blocks Lab Equipment](https://poly.pizza/m/atB26Z6BPd0) | Don Carson (Poly Pizza) | CC-BY | Material de laboratorio decorativo |
+| [Cork Board](https://poly.pizza/m/5Ql0Sdq6fmy) | Jarlan Perez (Poly Pizza) | CC-BY | Tablón de corcho |
 
 **Sobre las licencias:**
 - **CC0 (Kenney):** dominio público. Se puede usar sin atribución; aun así se citan aquí.
 - **Pixabay Content License:** uso gratuito, también en juegos, sin atribución obligatoria. Se cita a los autores igualmente, con los enlaces que facilita Pixabay. No permite redistribuir los archivos sueltos como si fueran propios, cosa que no se hace: solo se usan dentro del juego.
 - **Ningún asset de audio exige atribución obligatoria.** Los créditos se incluyen por transparencia, tal como pide el enunciado.
+- **Modelos 3D:** los de Quaternius son CC0; el resto son **CC-BY (Creative Commons Attribution)**, que **obliga a citar al autor**, como se hace en esta tabla. <!-- TODO: confirmar la licencia de cada modelo en su página de Poly Pizza -->
 
 ## Proceso de desarrollo
 
