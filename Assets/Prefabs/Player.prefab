@@ -304,6 +304,7 @@ GameObject:
   - component: {fileID: 1825621029534814698}
   - component: {fileID: -7117648431848793008}
   - component: {fileID: 603680485473690329}
+  - component: {fileID: 7673068488225631891}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -464,6 +465,20 @@ MonoBehaviour:
   gravity: -9.81
   lookSensitivity: 0.1
   maxPitch: 80
+--- !u!114 &7673068488225631891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7979358634190137387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c93a3fc3e704c5d9dee889263b99278, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EscapeRoomLab.PlayerPush
+  pushSpeed: 2
+  maxPushMass: 30
 --- !u!1 &8831227789595268833
 GameObject:
   m_ObjectHideFlags: 0
