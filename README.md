@@ -58,6 +58,7 @@ La historia se presenta en el menú de inicio y se cierra en la pantalla final: 
 | Rotar el objeto que se sostiene | Mantener clic derecho y mover el ratón |
 | Acercar / alejar el objeto que se sostiene | Rueda del ratón |
 | Pausa / continuar | `Esc` |
+| Volumen general | Deslizador en el menú de pausa |
 
 ## Cómo ejecutar el proyecto
 
@@ -98,6 +99,7 @@ Para generar la build: **File → Build Profiles**, perfil **Windows** → **Bui
 | Nota con el código, que se coge y se rota para leerla | ✅ Hecho (falta esconderla) |
 | Menú de inicio con la historia, y pantalla final al escapar | ✅ Hecho |
 | Menú de pausa con vuelta al menú principal | ✅ Hecho |
+| Control de volumen general en el menú de pausa | ✅ Hecho |
 | Fundido a negro entre escenas | ✅ Hecho |
 | Ayuda contextual de controles (coger, soltar, girar) | ✅ Hecho |
 | Sonido: pasos, coger y soltar, golpes de objetos, vitrina, puerta, código correcto e incorrecto, botones | ✅ Hecho |
@@ -191,7 +193,7 @@ Todo el código está en el namespace `EscapeRoomLab` y comentado en español.
 | `PlayerPush` | Permite empujar objetos con Rigidbody al caminar contra ellos (por ejemplo, la silla). |
 | `LightBulb` | Bombilla visible que copia el color y el estado de una luz: la de la cerradura parpadea en rojo al fallar y se pone verde al acertar. |
 | `AimAt` | Orienta un objeto hacia un objetivo; el foco de la lámpara de escritorio apunta así a la nota. |
-| `VolumeSlider` | Volumen general guardado en `PlayerPrefs`, combinado con el volumen de los fundidos. El script está listo, pero no se llegó a añadir el control a la interfaz. |
+| `VolumeSlider` | Volumen general guardado en `PlayerPrefs`, combinado con el volumen de los fundidos. Se controla con un deslizador en el menú de pausa. |
 
 ### Decisiones técnicas
 
@@ -402,7 +404,6 @@ El reparto de trabajo fue siempre el mismo: yo decidía qué quería conseguir y
 - **Partículas.** Partículas al abrir la vitrina, al anclar los cubos y al abrir la puerta de salida.
 - **Más ambientación.** Muebles, objetos de laboratorio y una nota mejor escondida para alargar la exploración.
 - **Ajuste de las lámparas.** Las luces del techo siguen siendo algo brillantes.
-- **Opciones de volumen.** El control de volumen general (`VolumeSlider`) está programado, pero falta añadirlo al menú de pausa o a un menú de opciones.
 
 ---
 
