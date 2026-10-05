@@ -2,7 +2,7 @@
 
 Minijuego 3D para PC de tipo *escape room*, desarrollado en Unity como prueba técnica de prácticas para **Virtual Zone**.
 
-> **Estado:** en desarrollo.
+> **Estado:** terminado y entregado (05/10/2026). [Descargar la build para Windows](https://drive.google.com/drive/folders/166joykuvenDGUOKrfLaLsOWbfPDy-2ou?usp=sharing).
 
 ---
 
@@ -45,7 +45,7 @@ La historia se presenta en el menú de inicio y se cierra en la pantalla final: 
 
 ### Build para Windows
 
-1. Descarga y descomprime `EscapeRoomLab.zip`. <!-- TODO: enlace a la build -->
+1. Descarga `EscapeRoomLab.zip` desde [Google Drive](https://drive.google.com/drive/folders/166joykuvenDGUOKrfLaLsOWbfPDy-2ou?usp=sharing) y descomprímelo.
 2. Ejecuta `EscapeRoomLab.exe`.
 
 ### Controles
@@ -132,7 +132,7 @@ Para generar la build: **File → Build Profiles**, perfil **Windows** → **Bui
 | Sonido (efectos y/o música) | ✅ | Música de fondo, pasos, coger y soltar, golpes según la fuerza del choque, vitrina, puerta, código correcto e incorrecto y botones de los menús |
 destello al anclar un cubo, ayuda contextual de controles, brazo de la balanza que se inclina, cubos que encajan con una transición, luz roja que parpadea al fallar, puerta que se abre, sonidos de cada acción y golpes cuyo volumen depende de la fuerza del choque. Falta: partículas |
 | Al menos una pieza de arte propia o retocada | ✅ | Pesas modeladas en Blender. Ver [Arte propio](#arte-propio) |
-| Build para Windows en `.zip` | 🟨 | Primera build generada y probada; falta la definitiva y el `.zip` |
+| Build para Windows en `.zip` | ✅ | [Descarga en Google Drive](https://drive.google.com/drive/folders/166joykuvenDGUOKrfLaLsOWbfPDy-2ou?usp=sharing) |
 
 **Extras opcionales**
 
