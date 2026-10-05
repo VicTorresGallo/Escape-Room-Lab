@@ -51,7 +51,7 @@ namespace EscapeRoomLab
             else
             {
                 // Sin fundido no hay nada que restaure el volumen si la escena anterior lo dejó a 0.
-                AudioListener.volume = 1f;
+                AudioListener.volume = VolumeSlider.MasterVolume;
             }
         }
 
@@ -115,7 +115,7 @@ namespace EscapeRoomLab
             fadeGroup.alpha = alpha;
 
             // AudioListener.volume es global y se conserva entre escenas: por eso cada escena lo restaura en su fundido de entrada.
-            AudioListener.volume = 1f - alpha;
+            AudioListener.volume = (1f - alpha) * VolumeSlider.MasterVolume;
         }
     }
 }
