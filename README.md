@@ -206,7 +206,7 @@ Todo el código está en el namespace `EscapeRoomLab` y comentado en español.
 
 **Pesas modeladas en Blender.** Las pesas del puzle de la balanza son un modelo propio. Partí de un cubo, le añadí *loop cuts* y escalé esos cortes para sacar la forma principal de la pesa; después le apliqué *Subdivision Surface* para suavizarla y marqué algunas aristas como afiladas (*crease*) para que conservaran su forma. El modelo se exportó en FBX a `Assets/Art/Models/Pesas/`. En Unity usa un material metálico y un *Mesh Collider* convexo; los distintos pesos son el mismo modelo a distintos tamaños, para que el jugador deduzca la masa por el tamaño.
 
-<!-- TODO: añadir captura en Docs/ y el .blend en ArtSource/ -->
+El archivo fuente de Blender está en [`ArtSource/Pesa.blend`](ArtSource/Pesa.blend) (fuera de `Assets/` para que Unity no necesite Blender instalado para abrir el proyecto).
 
 Otros retoques propios: la música de fondo recortada con Audacity y todos los materiales del laboratorio, hechos en Unity.
 
