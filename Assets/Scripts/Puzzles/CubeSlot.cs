@@ -26,6 +26,21 @@ namespace EscapeRoomLab
         [Tooltip("Velocidad con la que sale despedido el cubo al expulsarlo (código incorrecto).")]
         [SerializeField] private float ejectSpeed = 2f;
 
+        [Header("Indicador visual")]
+        [Tooltip("Malla que marca la ranura. Solo se ve como guía mientras está vacía y el jugador lleva un cubo numerado, " +
+                 "y un instante como destello al anclar un cubo. Si se deja vacío, se usa el Renderer de este objeto.")]
+        [SerializeField] private Renderer placeholder;
+        [Tooltip("Material de la guía y del destello (verde translúcido).")]
+        [SerializeField] private Material guideMaterial;
+
+        [Header("Destello al anclar")]
+        [Tooltip("Color inicial del destello; se desvanece hasta volverse transparente.")]
+        [SerializeField] private Color flashColor = new Color(0.5f, 1f, 0.6f, 0.7f);
+        [Tooltip("Cuánto crece el destello alrededor del cubo (0.15 = un 15 %).")]
+        [SerializeField] private float punchScale = 0.15f;
+        [Tooltip("Segundos que dura el destello.")]
+        [SerializeField] private float placeEffectDuration = 0.4f;
+
         [Tooltip("Se lanza al encajar un cubo: sonido, partículas...")]
         public UnityEvent onCubePlaced;
 
@@ -39,11 +54,58 @@ namespace EscapeRoomLab
             GetComponent<Collider>().isTrigger = true;
         }
 
+        private ObjectGrabber grabber;
+
+        // True mientras se reproduce el destello de anclaje.
+        private bool isFlashing;
+        private Vector3 placeholderBaseScale;
+        private MaterialPropertyBlock propertyBlock;
+        private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
+
         private void Awake()
         {
             if (snapPoint == null)
             {
                 snapPoint = transform;
+            }
+            if (placeholder == null)
+            {
+                placeholder = GetComponent<Renderer>();
+            }
+            if (placeholder != null)
+            {
+                placeholderBaseScale = placeholder.transform.localScale;
+            }
+
+            propertyBlock = new MaterialPropertyBlock();
+            grabber = FindAnyObjectByType<ObjectGrabber>();
+            UpdatePlaceholder();
+        }
+
+        private void Update()
+        {
+            UpdatePlaceholder();
+        }
+
+        /// <summary>
+        /// La ranura solo se ve como guía cuando está vacía y el jugador lleva un cubo numerado,
+        /// o durante el destello al anclar. Con el cubo ya anclado se oculta y se ve el cubo original.
+        /// Así la cerradura no muestra "cubos fantasma" que se confundan con los cubos de verdad.
+        /// </summary>
+        private void UpdatePlaceholder()
+        {
+            if (placeholder == null)
+            {
+                return;
+            }
+
+            bool carryingCube = grabber != null && grabber.IsHolding &&
+                                grabber.HeldObject.TryGetComponent(out NumberCube _);
+            placeholder.enabled = isFlashing || (CurrentCube == null && carryingCube);
+
+            if (guideMaterial != null && placeholder.sharedMaterial != guideMaterial)
+            {
+                placeholder.sharedMaterial = guideMaterial;
             }
         }
 
@@ -110,13 +172,63 @@ namespace EscapeRoomLab
                 return null;
             }
 
-            // Por si se saca mientras aún se estaba colocando.
+            // Por si se saca mientras aún se estaba colocando o animando.
             StopAllCoroutines();
+            ResetPlaceEffect();
 
             CurrentCube = null;
             cube.Grabbable.Grabbed -= OnCubeGrabbed;
             cube.Body.isKinematic = false;
+            UpdatePlaceholder();
             return cube;
+        }
+
+        /// <summary>
+        /// Al anclar: un destello verde translúcido envuelve el cubo, crece un poco y se desvanece.
+        /// Siempre es algo más grande que el cubo, así sus caras no coinciden y no parpadean.
+        /// El color se cambia con un MaterialPropertyBlock para no modificar el material compartido por las cuatro ranuras.
+        /// </summary>
+        private IEnumerator PlaceEffectRoutine()
+        {
+            if (placeholder == null)
+            {
+                yield break;
+            }
+
+            isFlashing = true;
+            UpdatePlaceholder();
+
+            Transform target = placeholder.transform;
+            Color transparent = new Color(flashColor.r, flashColor.g, flashColor.b, 0f);
+
+            for (float time = 0f; time < placeEffectDuration; time += Time.deltaTime)
+            {
+                float t = time / placeEffectDuration;
+
+                // Parte un 5 % más grande que el cubo y crece en "campana" (sin(πt): 0 → 1 → 0).
+                target.localScale = placeholderBaseScale * (1.05f + punchScale * Mathf.Sin(t * Mathf.PI));
+
+                // Se desvanece: del color del destello a transparente.
+                propertyBlock.SetColor(BaseColorId, Color.Lerp(flashColor, transparent, t));
+                placeholder.SetPropertyBlock(propertyBlock);
+                yield return null;
+            }
+
+            ResetPlaceEffect();
+        }
+
+        private void ResetPlaceEffect()
+        {
+            if (placeholder == null)
+            {
+                return;
+            }
+
+            isFlashing = false;
+            placeholder.transform.localScale = placeholderBaseScale;
+            propertyBlock.Clear();
+            placeholder.SetPropertyBlock(propertyBlock);
+            UpdatePlaceholder();
         }
 
         private static NumberCube GetCube(Collider other)
@@ -168,6 +280,8 @@ namespace EscapeRoomLab
                 yield return null;
             }
             cubeTransform.SetPositionAndRotation(snapPoint.position, targetRotation);
+
+            StartCoroutine(PlaceEffectRoutine());
 
             Debug.Log($"{name}: encajado el cubo {cube.Number}.", this);
             onCubePlaced.Invoke();
